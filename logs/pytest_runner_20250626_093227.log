@@ -1,0 +1,478 @@
+2025-06-26 09:32:27,579 - INFO - 🚀 STARTING ENHANCED PYTEST TEST SUITE 🚀
+2025-06-26 09:32:27,580 - INFO - Working directory: /home/ubuntu/examen_bentoml
+2025-06-26 09:32:27,580 - INFO - Python version: 3.10.18 (main, Jun  4 2025, 08:56:00) [GCC 9.4.0]
+2025-06-26 09:32:27,580 - INFO - 
+================================================================================
+2025-06-26 09:32:27,580 - INFO - Running: Verify pytest installation
+2025-06-26 09:32:27,580 - INFO - Command: uv run python -c "import pytest; print(f'pytest version: {pytest.__version__}')"
+2025-06-26 09:32:27,580 - INFO - ================================================================================
+2025-06-26 09:32:27,895 - INFO - ✅ SUCCESS: Verify pytest installation
+2025-06-26 09:32:27,895 - INFO - Output:
+pytest version: 8.4.1
+
+2025-06-26 09:32:27,895 - INFO - 
+================================================================================
+2025-06-26 09:32:27,895 - INFO - Running: Data Preparation Tests
+2025-06-26 09:32:27,895 - INFO - Command: uv run pytest tests/test_data_preparation.py -v --no-cov
+2025-06-26 09:32:27,896 - INFO - ================================================================================
+2025-06-26 09:32:30,222 - INFO - ✅ SUCCESS: Data Preparation Tests
+2025-06-26 09:32:30,222 - INFO - Output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 15 items
+
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [  6%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 13%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 20%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 26%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 33%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 40%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 53%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 60%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 66%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 73%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 80%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 86%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 93%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 15 passed, 1 warning in 1.35s =========================
+
+2025-06-26 09:32:30,223 - INFO - 
+================================================================================
+2025-06-26 09:32:30,223 - INFO - Running: Model Training Tests
+2025-06-26 09:32:30,223 - INFO - Command: uv run pytest tests/test_model_training.py -v --no-cov
+2025-06-26 09:32:30,223 - INFO - ================================================================================
+2025-06-26 09:32:33,876 - INFO - ✅ SUCCESS: Model Training Tests
+2025-06-26 09:32:33,876 - INFO - Output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 15 items
+
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [  6%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 13%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 20%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization PASSED [ 26%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 33%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 40%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 46%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 53%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 60%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 66%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 73%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 80%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 86%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 93%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_model_training.py:259
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:259: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 15 passed, 1 warning in 2.64s =========================
+
+2025-06-26 09:32:33,877 - INFO - 
+================================================================================
+2025-06-26 09:32:33,877 - INFO - Running: BentoML Integration Tests
+2025-06-26 09:32:33,878 - INFO - Command: uv run pytest tests/test_bentoml_integration.py -v --no-cov
+2025-06-26 09:32:33,878 - INFO - ================================================================================
+2025-06-26 09:32:38,226 - ERROR - ❌ FAILED: BentoML Integration Tests
+2025-06-26 09:32:38,226 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 11 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load PASSED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata PASSED [ 18%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects PASSED [ 27%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [ 36%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 45%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 54%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 63%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 72%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 81%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 90%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [100%]
+
+=================================== FAILURES ===================================
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f2600239e10>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        saved_model = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+        assert bentoml.models.get(saved_model.tag) is not None
+    
+        # Delete model
+        bentoml.models.delete(saved_model.tag)
+    
+        # Verify model is deleted
+        with pytest.raises(bentoml.exceptions.NotFound):
+            bentoml.models.get(saved_model.tag)
+        with pytest.raises(bentoml.exceptions.NotFound):
+>           bentoml.models.get(model_tag)
+E           NameError: name 'model_tag' is not defined
+
+tests/test_bentoml_integration.py:189: NameError
+=============================== warnings summary ===============================
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion - NameError: name 'model_tag' is not defined
+=================== 1 failed, 10 passed, 6 warnings in 3.12s ===================
+
+2025-06-26 09:32:38,227 - INFO - 
+================================================================================
+2025-06-26 09:32:38,227 - INFO - Running: Full Test Suite
+2025-06-26 09:32:38,227 - INFO - Command: uv run pytest tests/ -v --no-cov
+2025-06-26 09:32:38,227 - INFO - ================================================================================
+2025-06-26 09:32:44,280 - ERROR - ❌ FAILED: Full Test Suite
+2025-06-26 09:32:44,281 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 41 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load PASSED [  2%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata PASSED [  4%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects PASSED [  7%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 12%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 14%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 17%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 19%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 21%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 24%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [ 26%]
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [ 29%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 31%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 34%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 36%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 39%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 41%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 43%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 48%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 51%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 53%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 56%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 58%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 60%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [ 63%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [ 65%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 68%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 70%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization PASSED [ 73%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 75%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 78%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 80%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 82%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 85%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 87%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 90%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 92%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 95%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 97%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=================================== FAILURES ===================================
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7fc2e4106080>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        saved_model = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+        assert bentoml.models.get(saved_model.tag) is not None
+    
+        # Delete model
+        bentoml.models.delete(saved_model.tag)
+    
+        # Verify model is deleted
+        with pytest.raises(bentoml.exceptions.NotFound):
+            bentoml.models.get(saved_model.tag)
+        with pytest.raises(bentoml.exceptions.NotFound):
+>           bentoml.models.get(model_tag)
+E           NameError: name 'model_tag' is not defined
+
+tests/test_bentoml_integration.py:189: NameError
+=============================== warnings summary ===============================
+tests/test_model_training.py:259
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:259: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion - NameError: name 'model_tag' is not defined
+=================== 1 failed, 40 passed, 8 warnings in 4.80s ===================
+
+2025-06-26 09:32:44,282 - INFO - 
+================================================================================
+2025-06-26 09:32:44,282 - INFO - Running: Full Test Suite with Coverage
+2025-06-26 09:32:44,282 - INFO - Command: uv run pytest tests/ -v --cov=src --cov-report=term-missing --cov-fail-under=15
+2025-06-26 09:32:44,282 - INFO - ================================================================================
+2025-06-26 09:32:53,703 - ERROR - ❌ FAILED: Full Test Suite with Coverage
+2025-06-26 09:32:53,703 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 41 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load PASSED [  2%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata PASSED [  4%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects PASSED [  7%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 12%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 14%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 17%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 19%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 21%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 24%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [ 26%]
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [ 29%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 31%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 34%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 36%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 39%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 41%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 43%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 48%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 51%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 53%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 56%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 58%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 60%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [ 63%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [ 65%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 68%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 70%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization PASSED [ 73%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 75%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 78%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 80%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 82%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 85%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 87%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 90%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 92%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 95%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 97%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=================================== FAILURES ===================================
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7ff6b9887520>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        saved_model = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+        assert bentoml.models.get(saved_model.tag) is not None
+    
+        # Delete model
+        bentoml.models.delete(saved_model.tag)
+    
+        # Verify model is deleted
+        with pytest.raises(bentoml.exceptions.NotFound):
+            bentoml.models.get(saved_model.tag)
+        with pytest.raises(bentoml.exceptions.NotFound):
+>           bentoml.models.get(model_tag)
+E           NameError: name 'model_tag' is not defined
+
+tests/test_bentoml_integration.py:189: NameError
+=============================== warnings summary ===============================
+tests/test_model_training.py:259
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:259: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.10.18-final-0 _______________
+
+Name                  Stmts   Miss  Cover   Missing
+---------------------------------------------------
+src/__init__.py           6      6     0%   8-15
+src/prepare_data.py     117     44    62%   43-45, 131-158, 162-201
+src/train_model.py      142     64    55%   44, 161-187, 191-223, 227-243, 247-297
+---------------------------------------------------
+TOTAL                   265    114    57%
+Coverage HTML written to dir htmlcov
+Required test coverage of 15% reached. Total coverage: 56.98%
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion - NameError: name 'model_tag' is not defined
+=================== 1 failed, 40 passed, 8 warnings in 8.05s ===================
+
+2025-06-26 09:32:53,706 - INFO - 
+================================================================================
+2025-06-26 09:32:53,706 - INFO - 📋 FINAL TEST SUMMARY
+2025-06-26 09:32:53,706 - INFO - ================================================================================
+2025-06-26 09:32:53,706 - INFO - Total Tests: 6
+2025-06-26 09:32:53,707 - INFO - ✅ Passed: 3
+2025-06-26 09:32:53,707 - INFO - ❌ Failed: 3
+2025-06-26 09:32:53,707 - INFO - Success Rate: 50.0%
+2025-06-26 09:32:53,707 - WARNING - ⚠️  3 test(s) failed

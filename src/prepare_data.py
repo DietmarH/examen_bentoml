@@ -9,12 +9,25 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import os
 import logging
+import sys
+from pathlib import Path
+
+# Add config to path
+sys.path.append(str(Path(__file__).parent.parent / "config"))
+from settings import *
 
 # Configure logging
+log_file = LOGS_DIR / "data_preparation.log"
+log_file.parent.mkdir(exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    format=LOG_FORMAT,
+    datefmt=LOG_DATE_FORMAT,
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(log_file)
+    ]
 )
 log = logging.getLogger(__name__)
 
@@ -77,14 +90,15 @@ def prepare_features_target(df):
     log.info("=== Feature and Target Preparation ===")
     
     # Define target variable
-    target_column = 'Chance of Admit '  # Note the space at the end
-    if target_column not in df.columns:
+    if TARGET_COLUMN not in df.columns:
         # Try without space
         target_column = 'Chance of Admit'
         if target_column not in df.columns:
             log.error("Target variable 'Chance of Admit' not found in columns")
             log.error(f"Available columns: {df.columns.tolist()}")
             return None, None
+    else:
+        target_column = TARGET_COLUMN
     
     # Separate features (X) and target (y)
     X = df.drop(target_column, axis=1)
@@ -98,7 +112,7 @@ def prepare_features_target(df):
     
     return X, y
 
-def split_data(X, y, test_size=0.2, random_state=42):
+def split_data(X, y, test_size=TEST_SIZE, random_state=MODEL_RANDOM_STATE):
     """Split the data into training and testing sets."""
     log.info("=== Data Splitting ===")
     log.info(f"Splitting data with test_size={test_size}, random_state={random_state}")
@@ -147,17 +161,15 @@ def main():
     """Main function to execute the data preparation pipeline."""
     log.info("=== ADMISSION DATA PREPARATION PIPELINE ===")
     
-    # Define file paths
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(current_dir)
-    input_file = os.path.join(project_root, 'data', 'raw', 'admission.csv')
-    output_dir = os.path.join(project_root, 'data', 'processed')
+    # Define file paths using configuration
+    input_file = ADMISSION_DATA_FILE
+    output_dir = PROCESSED_DATA_DIR
     
     log.info(f"Input file: {input_file}")
     log.info(f"Output directory: {output_dir}")
     
     # Step 1: Load data
-    df = load_data(input_file)
+    df = load_data(str(input_file))
     if df is None:
         log.fatal("Failed to load data. Exiting pipeline.")
         return
@@ -175,7 +187,7 @@ def main():
     X_train, X_test, y_train, y_test = split_data(X, y)
     
     # Step 5: Save processed data
-    file_paths = save_processed_data(X_train, X_test, y_train, y_test, output_dir)
+    file_paths = save_processed_data(X_train, X_test, y_train, y_test, str(output_dir))
     if file_paths is None:
         log.fatal("Failed to save processed data. Exiting pipeline.")
         return

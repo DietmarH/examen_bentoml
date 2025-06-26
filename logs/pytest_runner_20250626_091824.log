@@ -1,0 +1,988 @@
+2025-06-26 09:18:24,342 - INFO - 🚀 STARTING ENHANCED PYTEST TEST SUITE 🚀
+2025-06-26 09:18:24,343 - INFO - Working directory: /home/ubuntu/examen_bentoml
+2025-06-26 09:18:24,343 - INFO - Python version: 3.10.18 (main, Jun  4 2025, 08:56:00) [GCC 9.4.0]
+2025-06-26 09:18:24,343 - INFO - 
+================================================================================
+2025-06-26 09:18:24,343 - INFO - Running: Verify pytest installation
+2025-06-26 09:18:24,343 - INFO - Command: python -c "import pytest; print(f'pytest version: {pytest.__version__}')"
+2025-06-26 09:18:24,344 - INFO - ================================================================================
+2025-06-26 09:18:24,615 - INFO - ✅ SUCCESS: Verify pytest installation
+2025-06-26 09:18:24,615 - INFO - Output:
+pytest version: 8.4.1
+
+2025-06-26 09:18:24,616 - INFO - 
+================================================================================
+2025-06-26 09:18:24,616 - INFO - Running: Data Preparation Tests
+2025-06-26 09:18:24,616 - INFO - Command: python -m pytest tests/test_data_preparation.py -v
+2025-06-26 09:18:24,616 - INFO - ================================================================================
+2025-06-26 09:18:27,144 - INFO - ✅ SUCCESS: Data Preparation Tests
+2025-06-26 09:18:27,145 - INFO - Output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 15 items
+
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [  6%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 13%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 20%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 26%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 33%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 40%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 53%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 60%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 66%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 73%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 80%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 86%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 93%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 15 passed, 1 warning in 1.52s =========================
+
+2025-06-26 09:18:27,145 - INFO - 
+================================================================================
+2025-06-26 09:18:27,145 - INFO - Running: Model Training Tests
+2025-06-26 09:18:27,146 - INFO - Command: python -m pytest tests/test_model_training.py -v
+2025-06-26 09:18:27,146 - INFO - ================================================================================
+2025-06-26 09:18:31,103 - ERROR - ❌ FAILED: Model Training Tests
+2025-06-26 09:18:31,103 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 15 items
+
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [  6%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 13%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 20%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization FAILED [ 26%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 33%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 40%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 46%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 53%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 60%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 66%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 73%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 80%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 86%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 93%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=================================== FAILURES ===================================
+__________ TestFeaturePreprocessing.test_preprocessing_normalization ___________
+
+self = <test_model_training.TestFeaturePreprocessing object at 0x7fd1aad759c0>
+
+    def test_preprocessing_normalization(self):
+        """Test that features are properly normalized."""
+        X_train_scaled, X_test_scaled, scaler = preprocess_features(
+            self.X_train, self.X_test
+        )
+    
+        # Check that training data is approximately normalized
+        train_means = X_train_scaled.mean()
+        train_stds = X_train_scaled.std()
+    
+        # Means should be close to 0, stds close to 1
+        assert all(abs(mean) < 0.1 for mean in train_means)
+>       assert all(abs(std - 1.0) < 0.1 for std in train_stds)
+E       assert False
+E        +  where False = all(<generator object TestFeaturePreprocessing.test_preprocessing_normalization.<locals>.<genexpr> at 0x7fd1aac4e9d0>)
+
+tests/test_model_training.py:88: AssertionError
+=============================== warnings summary ===============================
+tests/test_model_training.py:258
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization
+=================== 1 failed, 14 passed, 1 warning in 2.95s ====================
+
+2025-06-26 09:18:31,104 - INFO - 
+================================================================================
+2025-06-26 09:18:31,105 - INFO - Running: BentoML Integration Tests
+2025-06-26 09:18:31,105 - INFO - Command: python -m pytest tests/test_bentoml_integration.py -v
+2025-06-26 09:18:31,105 - INFO - ================================================================================
+2025-06-26 09:18:35,413 - ERROR - ❌ FAILED: BentoML Integration Tests
+2025-06-26 09:18:35,414 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 11 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load FAILED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata FAILED [ 18%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects FAILED [ 27%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [ 36%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 45%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 54%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 63%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 72%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 81%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 90%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [100%]
+
+=================================== FAILURES ===================================
+_____________ TestBentoMLIntegration.test_bentoml_model_save_load ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f994eb1cb20>
+
+    def test_bentoml_model_save_load(self):
+        """Test saving and loading a model to/from BentoML."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a simple model
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        model = LinearRegression()
+        model.fit(X, y)
+    
+        # Test saving
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_test",
+            model,
+            metadata={"test": True, "features": FEATURES}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        assert model_tag is not None
+>       assert isinstance(model_tag, bentoml.Tag)
+E       assert False
+E        +  where False = isinstance(Model(tag="admission_prediction_test:rbei2tssn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_test/rbei2tssn2zr6o4p/"), <class 'bentoml._internal.tag.Tag'>)
+E        +    where <class 'bentoml._internal.tag.Tag'> = bentoml.Tag
+
+tests/test_bentoml_integration.py:58: AssertionError
+______________ TestBentoMLIntegration.test_bentoml_model_metadata ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f994eb1d210>
+
+    def test_bentoml_model_metadata(self):
+        """Test that model metadata is properly saved and retrieved."""
+        from sklearn.linear_model import LinearRegression
+    
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        test_metadata = {
+            "model_type": "Linear Regression",
+            "test_r2": 0.85,
+            "features": FEATURES,
+            "test_mode": True
+        }
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_metadata_test",
+            model,
+            metadata=test_metadata
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Retrieve model info
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_metadata_test:rbei2ucsn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_metadata_test/rbei2ucsn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+______________ TestBentoMLIntegration.test_bentoml_custom_objects ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f994eb1d3c0>
+
+    def test_bentoml_custom_objects(self):
+        """Test saving model with custom objects (scaler)."""
+        from sklearn.linear_model import LinearRegression
+        from sklearn.preprocessing import StandardScaler
+    
+        # Create model and scaler
+        scaler = StandardScaler()
+        model = LinearRegression()
+    
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        X_scaled = scaler.fit_transform(X)
+        model.fit(X_scaled, y)
+    
+        # Save with custom objects
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_scaler_test",
+            model,
+            custom_objects={"scaler": scaler},
+            metadata={"has_scaler": True}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Load and test
+        loaded_model = bentoml.sklearn.load_model(model_tag)
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_scaler_test:rbei2uksn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_scaler_test/rbei2uksn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f994eb1d9f0>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+>       assert bentoml.models.get(model_tag) is not None
+
+tests/test_bentoml_integration.py:180: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_deletion_test:rbei2ussn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_deletion_test/rbei2ussn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+=============================== warnings summary ===============================
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion
+=================== 4 failed, 7 passed, 6 warnings in 3.12s ====================
+
+2025-06-26 09:18:35,418 - INFO - 
+================================================================================
+2025-06-26 09:18:35,418 - INFO - Running: Full Test Suite
+2025-06-26 09:18:35,418 - INFO - Command: python -m pytest tests/ -v
+2025-06-26 09:18:35,418 - INFO - ================================================================================
+2025-06-26 09:18:41,594 - ERROR - ❌ FAILED: Full Test Suite
+2025-06-26 09:18:41,595 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 41 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load FAILED [  2%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata FAILED [  4%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects FAILED [  7%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 12%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 14%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 17%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 19%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 21%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 24%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [ 26%]
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [ 29%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 31%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 34%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 36%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 39%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 41%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 43%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 48%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 51%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 53%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 56%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 58%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 60%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [ 63%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [ 65%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 68%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 70%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization FAILED [ 73%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 75%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 78%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 80%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 82%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 85%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 87%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 90%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 92%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 95%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 97%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=================================== FAILURES ===================================
+_____________ TestBentoMLIntegration.test_bentoml_model_save_load ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f27747ccc40>
+
+    def test_bentoml_model_save_load(self):
+        """Test saving and loading a model to/from BentoML."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a simple model
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        model = LinearRegression()
+        model.fit(X, y)
+    
+        # Test saving
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_test",
+            model,
+            metadata={"test": True, "features": FEATURES}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        assert model_tag is not None
+>       assert isinstance(model_tag, bentoml.Tag)
+E       assert False
+E        +  where False = isinstance(Model(tag="admission_prediction_test:rlxpajcsn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_test/rlxpajcsn2zr6o4p/"), <class 'bentoml._internal.tag.Tag'>)
+E        +    where <class 'bentoml._internal.tag.Tag'> = bentoml.Tag
+
+tests/test_bentoml_integration.py:58: AssertionError
+______________ TestBentoMLIntegration.test_bentoml_model_metadata ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f27747cd330>
+
+    def test_bentoml_model_metadata(self):
+        """Test that model metadata is properly saved and retrieved."""
+        from sklearn.linear_model import LinearRegression
+    
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        test_metadata = {
+            "model_type": "Linear Regression",
+            "test_r2": 0.85,
+            "features": FEATURES,
+            "test_mode": True
+        }
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_metadata_test",
+            model,
+            metadata=test_metadata
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Retrieve model info
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_metadata_test:rlxpajssn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_metadata_test/rlxpajssn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+______________ TestBentoMLIntegration.test_bentoml_custom_objects ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f27747cd4e0>
+
+    def test_bentoml_custom_objects(self):
+        """Test saving model with custom objects (scaler)."""
+        from sklearn.linear_model import LinearRegression
+        from sklearn.preprocessing import StandardScaler
+    
+        # Create model and scaler
+        scaler = StandardScaler()
+        model = LinearRegression()
+    
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        X_scaled = scaler.fit_transform(X)
+        model.fit(X_scaled, y)
+    
+        # Save with custom objects
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_scaler_test",
+            model,
+            custom_objects={"scaler": scaler},
+            metadata={"has_scaler": True}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Load and test
+        loaded_model = bentoml.sklearn.load_model(model_tag)
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_scaler_test:rlxpaj2sn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_scaler_test/rlxpaj2sn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f27747cdb10>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+>       assert bentoml.models.get(model_tag) is not None
+
+tests/test_bentoml_integration.py:180: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_deletion_test:rlxpakcsn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_deletion_test/rlxpakcsn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+__________ TestFeaturePreprocessing.test_preprocessing_normalization ___________
+
+self = <test_model_training.TestFeaturePreprocessing object at 0x7f27689ae260>
+
+    def test_preprocessing_normalization(self):
+        """Test that features are properly normalized."""
+        X_train_scaled, X_test_scaled, scaler = preprocess_features(
+            self.X_train, self.X_test
+        )
+    
+        # Check that training data is approximately normalized
+        train_means = X_train_scaled.mean()
+        train_stds = X_train_scaled.std()
+    
+        # Means should be close to 0, stds close to 1
+        assert all(abs(mean) < 0.1 for mean in train_means)
+>       assert all(abs(std - 1.0) < 0.1 for std in train_stds)
+E       assert False
+E        +  where False = all(<generator object TestFeaturePreprocessing.test_preprocessing_normalization.<locals>.<genexpr> at 0x7f27652c53f0>)
+
+tests/test_model_training.py:88: AssertionError
+=============================== warnings summary ===============================
+tests/test_model_training.py:258
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion
+FAILED tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization
+=================== 5 failed, 36 passed, 8 warnings in 4.95s ===================
+
+2025-06-26 09:18:41,600 - INFO - 
+================================================================================
+2025-06-26 09:18:41,600 - INFO - Running: Full Test Suite with Coverage
+2025-06-26 09:18:41,601 - INFO - Command: python -m pytest tests/ -v --cov=src --cov-report=term-missing
+2025-06-26 09:18:41,601 - INFO - ================================================================================
+2025-06-26 09:18:50,949 - ERROR - ❌ FAILED: Full Test Suite with Coverage
+2025-06-26 09:18:50,949 - ERROR - Standard output:
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.4.1, pluggy-1.6.0 -- /home/ubuntu/examen_bentoml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/examen_bentoml
+plugins: anyio-4.9.0, cov-6.2.1
+collecting ... collected 41 items
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load FAILED [  2%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata FAILED [  4%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects FAILED [  7%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service PASSED [  9%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_store_listing PASSED [ 12%]
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion FAILED [ 14%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_saved_model_performance_threshold PASSED [ 17%]
+tests/test_bentoml_integration.py::TestModelPerformanceValidation::test_model_feature_consistency PASSED [ 19%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_load_nonexistent_model PASSED [ 21%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_save_invalid_model PASSED [ 24%]
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape PASSED [ 26%]
+tests/test_data_preparation.py::TestDataLoading::test_load_existing_file PASSED [ 29%]
+tests/test_data_preparation.py::TestDataLoading::test_load_nonexistent_file PASSED [ 31%]
+tests/test_data_preparation.py::TestDataLoading::test_load_invalid_file PASSED [ 34%]
+tests/test_data_preparation.py::TestDataCleaning::test_remove_serial_column PASSED [ 36%]
+tests/test_data_preparation.py::TestDataCleaning::test_duplicate_removal PASSED [ 39%]
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling PASSED [ 41%]
+tests/test_data_preparation.py::TestDataCleaning::test_data_types_preserved PASSED [ 43%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_target_separation PASSED [ 46%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_missing_target_column PASSED [ 48%]
+tests/test_data_preparation.py::TestFeatureTargetPreparation::test_feature_names PASSED [ 51%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_proportions PASSED [ 53%]
+tests/test_data_preparation.py::TestDataSplitting::test_split_reproducibility PASSED [ 56%]
+tests/test_data_preparation.py::TestDataSplitting::test_no_data_leakage PASSED [ 58%]
+tests/test_data_preparation.py::TestDataIntegrity::test_processed_data_exists PASSED [ 60%]
+tests/test_data_preparation.py::TestDataIntegrity::test_data_consistency PASSED [ 63%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_success PASSED [ 65%]
+tests/test_model_training.py::TestDataLoading::test_load_processed_data_missing_files PASSED [ 68%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_shapes PASSED [ 70%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization FAILED [ 73%]
+tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_consistency PASSED [ 75%]
+tests/test_model_training.py::TestModelCreation::test_create_models_returns_dict PASSED [ 78%]
+tests/test_model_training.py::TestModelCreation::test_create_models_types PASSED [ 80%]
+tests/test_model_training.py::TestModelCreation::test_models_have_random_state PASSED [ 82%]
+tests/test_model_training.py::TestModelEvaluation::test_evaluate_models_cv_returns_results PASSED [ 85%]
+tests/test_model_training.py::TestModelEvaluation::test_best_model_selection PASSED [ 87%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_structure PASSED [ 90%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_perfect_prediction PASSED [ 92%]
+tests/test_model_training.py::TestMetricsCalculation::test_calculate_metrics_bounds PASSED [ 95%]
+tests/test_model_training.py::TestModelTraining::test_train_best_model PASSED [ 97%]
+tests/test_model_training.py::TestIntegrationTests::test_full_pipeline_with_real_data PASSED [100%]
+
+=================================== FAILURES ===================================
+_____________ TestBentoMLIntegration.test_bentoml_model_save_load ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f6e0325a200>
+
+    def test_bentoml_model_save_load(self):
+        """Test saving and loading a model to/from BentoML."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a simple model
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        model = LinearRegression()
+        model.fit(X, y)
+    
+        # Test saving
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_test",
+            model,
+            metadata={"test": True, "features": FEATURES}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        assert model_tag is not None
+>       assert isinstance(model_tag, bentoml.Tag)
+E       assert False
+E        +  where False = isinstance(Model(tag="admission_prediction_test:r5fvt6ssn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_test/r5fvt6ssn2zr6o4p/"), <class 'bentoml._internal.tag.Tag'>)
+E        +    where <class 'bentoml._internal.tag.Tag'> = bentoml.Tag
+
+tests/test_bentoml_integration.py:58: AssertionError
+______________ TestBentoMLIntegration.test_bentoml_model_metadata ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f6e0325a8f0>
+
+    def test_bentoml_model_metadata(self):
+        """Test that model metadata is properly saved and retrieved."""
+        from sklearn.linear_model import LinearRegression
+    
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        test_metadata = {
+            "model_type": "Linear Regression",
+            "test_r2": 0.85,
+            "features": FEATURES,
+            "test_mode": True
+        }
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_metadata_test",
+            model,
+            metadata=test_metadata
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Retrieve model info
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_metadata_test:r5fvt7csn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_metadata_test/r5fvt7csn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+______________ TestBentoMLIntegration.test_bentoml_custom_objects ______________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f6e0325aaa0>
+
+    def test_bentoml_custom_objects(self):
+        """Test saving model with custom objects (scaler)."""
+        from sklearn.linear_model import LinearRegression
+        from sklearn.preprocessing import StandardScaler
+    
+        # Create model and scaler
+        scaler = StandardScaler()
+        model = LinearRegression()
+    
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+    
+        X_scaled = scaler.fit_transform(X)
+        model.fit(X_scaled, y)
+    
+        # Save with custom objects
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_scaler_test",
+            model,
+            custom_objects={"scaler": scaler},
+            metadata={"has_scaler": True}
+        )
+    
+        self.sample_model_tag = model_tag
+    
+        # Load and test
+        loaded_model = bentoml.sklearn.load_model(model_tag)
+>       model_info = bentoml.models.get(model_tag)
+
+tests/test_bentoml_integration.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_scaler_test:r5fvt7ksn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_scaler_test/r5fvt7ksn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+__________________ TestBentoMLIntegration.test_model_deletion __________________
+
+self = <test_bentoml_integration.TestBentoMLIntegration object at 0x7f6e0325b0d0>
+
+    def test_model_deletion(self):
+        """Test model deletion from BentoML store."""
+        from sklearn.linear_model import LinearRegression
+    
+        # Create a temporary model
+        model = LinearRegression()
+        X = pd.DataFrame(SAMPLE_DATA)
+        y = np.array([0.7, 0.9, 0.4])
+        model.fit(X, y)
+    
+        model_tag = bentoml.sklearn.save_model(
+            f"{BENTOML_MODEL_NAME}_deletion_test",
+            model,
+            metadata={"temporary": True}
+        )
+    
+        # Verify model exists
+>       assert bentoml.models.get(model_tag) is not None
+
+tests/test_bentoml_integration.py:180: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.10/site-packages/simple_di/__init__.py:139: in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+.venv/lib/python3.10/site-packages/bentoml/models.py:49: in get
+    return _model_store.get(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/store.py:144: in get
+    _tag = Tag.from_taglike(tag)
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:114: in from_taglike
+    return cls.from_str(taglike)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'bentoml._internal.tag.Tag'>
+tag_str = Model(tag="admission_prediction_deletion_test:r5fvt7ssn2zr6o4p", path="/home/ubuntu/bentoml/models/admission_prediction_deletion_test/r5fvt7ssn2zr6o4p/")
+
+    @classmethod
+    def from_str(cls, tag_str: str) -> "Tag":
+>       if ":" not in tag_str:
+E       TypeError: argument of type 'Model' is not iterable
+
+.venv/lib/python3.10/site-packages/bentoml/_internal/tag.py:118: TypeError
+__________ TestFeaturePreprocessing.test_preprocessing_normalization ___________
+
+self = <test_model_training.TestFeaturePreprocessing object at 0x7f6df745ba30>
+
+    def test_preprocessing_normalization(self):
+        """Test that features are properly normalized."""
+        X_train_scaled, X_test_scaled, scaler = preprocess_features(
+            self.X_train, self.X_test
+        )
+    
+        # Check that training data is approximately normalized
+        train_means = X_train_scaled.mean()
+        train_stds = X_train_scaled.std()
+    
+        # Means should be close to 0, stds close to 1
+        assert all(abs(mean) < 0.1 for mean in train_means)
+>       assert all(abs(std - 1.0) < 0.1 for std in train_stds)
+E       assert False
+E        +  where False = all(<generator object TestFeaturePreprocessing.test_preprocessing_normalization.<locals>.<genexpr> at 0x7f6df3d21380>)
+
+tests/test_model_training.py:88: AssertionError
+=============================== warnings summary ===============================
+tests/test_model_training.py:258
+  /home/ubuntu/examen_bentoml/tests/test_model_training.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_prediction_service
+tests/test_bentoml_integration.py::TestErrorHandling::test_prediction_with_wrong_input_shape
+  /home/ubuntu/examen_bentoml/.venv/lib/python3.10/site-packages/sklearn/utils/validation.py:2749: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
+    warnings.warn(
+
+tests/test_data_preparation.py::TestDataCleaning::test_missing_values_handling
+  /home/ubuntu/examen_bentoml/src/prepare_data.py:70: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+  The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+  
+  For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+  
+  
+    df[col].fillna(df[col].median(), inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.10.18-final-0 _______________
+
+Name                  Stmts   Miss  Cover   Missing
+---------------------------------------------------
+src/prepare_data.py     119     45    62%   43-45, 131-158, 162-201, 204
+src/train_model.py      144     65    55%   44, 161-187, 191-223, 227-243, 247-297, 300
+---------------------------------------------------
+TOTAL                   263    110    58%
+=========================== short test summary info ============================
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_save_load
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_model_metadata
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_bentoml_custom_objects
+FAILED tests/test_bentoml_integration.py::TestBentoMLIntegration::test_model_deletion
+FAILED tests/test_model_training.py::TestFeaturePreprocessing::test_preprocessing_normalization
+=================== 5 failed, 36 passed, 8 warnings in 8.08s ===================
+
+2025-06-26 09:18:50,954 - INFO - 
+================================================================================
+2025-06-26 09:18:50,954 - INFO - 📋 FINAL TEST SUMMARY
+2025-06-26 09:18:50,954 - INFO - ================================================================================
+2025-06-26 09:18:50,955 - INFO - Total Tests: 6
+2025-06-26 09:18:50,955 - INFO - ✅ Passed: 2
+2025-06-26 09:18:50,955 - INFO - ❌ Failed: 4
+2025-06-26 09:18:50,955 - INFO - Success Rate: 33.3%
+2025-06-26 09:18:50,955 - WARNING - ⚠️  4 test(s) failed

@@ -1,0 +1,26 @@
+2025-06-26 08:45:58,277 - INFO - Checking BentoML models...
+2025-06-26 08:45:59,061 - INFO - Found 10 models in store
+2025-06-26 08:45:59,062 - INFO - Model: accidents_rf:2af5pqsqwwbfqlm6
+2025-06-26 08:45:59,062 - INFO - Metadata: {}
+2025-06-26 08:45:59,062 - INFO - Model: accidents_rf:dge34fcqw2bfqlm6
+2025-06-26 08:45:59,062 - INFO - Metadata: {}
+2025-06-26 08:45:59,062 - INFO - Model: accidents_rf:egd2uvcqw2bfqlm6
+2025-06-26 08:45:59,062 - INFO - Metadata: {}
+2025-06-26 08:45:59,062 - INFO - Model: accidents_rf:m7jwf3sq6s33typg
+2025-06-26 08:45:59,062 - INFO - Metadata: {}
+2025-06-26 08:45:59,062 - INFO - Model: accidents_rf:pyqikdsq6s33typg
+2025-06-26 08:45:59,062 - INFO - Metadata: {}
+2025-06-26 08:45:59,062 - INFO - Model: admission_prediction_linear_regression:2dyjivssngzr6o4p
+2025-06-26 08:45:59,063 - INFO - Metadata: {'model_type': 'Linear Regression', 'test_r2': 0.8188432567829627, 'test_rmse': 0.06086588041578314, 'test_mae': 0.0427226542770537, 'features': ['GRE Score', 'TOEFL Score', 'University Rating', 'SOP', 'LOR ', 'CGPA', 'Research'], 'cv_score': 0.8079016094502867}
+2025-06-26 08:45:59,063 - INFO - Model: admission_prediction_linear_regression:kqfqa6ssngzr6o4p
+2025-06-26 08:45:59,063 - INFO - Metadata: {'model_type': 'Linear Regression', 'test_r2': 0.8188432567829627, 'test_rmse': 0.06086588041578314, 'test_mae': 0.0427226542770537, 'test_mape': 6.857756648317821, 'features': ['GRE Score', 'TOEFL Score', 'University Rating', 'SOP', 'LOR ', 'CGPA', 'Research'], 'target': 'Chance of Admit', 'training_date': '2025-06-26T08:41:15.976233'}
+2025-06-26 08:45:59,063 - INFO - Model: admission_prediction_linear_regression:pfy6tassngzr6o4p
+2025-06-26 08:45:59,063 - INFO - Metadata: {'model_type': 'Linear Regression', 'test_r2': 0.8188432567829627, 'test_rmse': 0.06086588041578314, 'test_mae': 0.0427226542770537, 'test_mape': 6.857756648317821, 'features': ['GRE Score', 'TOEFL Score', 'University Rating', 'SOP', 'LOR ', 'CGPA', 'Research'], 'target': 'Chance of Admit', 'training_date': '2025-06-26T08:42:20.443913'}
+2025-06-26 08:45:59,063 - INFO - Model: admission_prediction_test:uct7lfssngzr6o4p
+2025-06-26 08:45:59,063 - INFO - Metadata: {'model_type': 'Linear Regression', 'test_r2': 0.8188432567829631, 'test_date': '2025-06-26T08:43:26.874501'}
+2025-06-26 08:45:59,063 - INFO - Model: admission_prediction_test:vymra4csngzr6o4p
+2025-06-26 08:45:59,063 - INFO - Metadata: {'model_type': 'Linear Regression', 'test_r2': 0.8188432567829631, 'test_date': '2025-06-26T08:43:49.426152'}
+2025-06-26 08:45:59,063 - INFO - Attempting to load model: admission_prediction_linear_regression:2dyjivssngzr6o4p
+2025-06-26 08:46:00,342 - INFO - Model loaded successfully!
+2025-06-26 08:46:00,343 - INFO - Test prediction: 11.9206
+2025-06-26 08:46:00,343 - INFO - BentoML verification completed successfully!
