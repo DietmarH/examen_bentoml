@@ -4,3 +4,5 @@
 /clean_data.csv
 /data/
 .vscode/
+config/__pycache__/
+logs

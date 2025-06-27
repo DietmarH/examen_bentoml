@@ -14,7 +14,7 @@ from .train_model import create_models, preprocess_features, evaluate_model
 
 __all__ = [
     "load_data",
-    "clean_data", 
+    "clean_data",
     "prepare_features_target",
     "create_models",
     "preprocess_features",

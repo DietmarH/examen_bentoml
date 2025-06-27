@@ -1,0 +1,15 @@
+[flake8]
+# Ignore line break before binary operator
+ignore = W503
+# Set maximum line length to 88 characters
+max-line-length = 88
+exclude = 
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv,
+    .env,
+    .tox,
+    .eggs,
+    *.egg
