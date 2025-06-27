@@ -1,6 +1,0 @@
-Simple Test Results
-==================
-Tests Run: 8
-Passed: 8
-Failed: 0
-Success Rate: 100.0%

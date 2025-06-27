@@ -1,9 +1,7 @@
 """
 Test configuration and utilities.
 """
-import pytest
 import sys
-import os
 from pathlib import Path
 
 # Add project root to Python path
