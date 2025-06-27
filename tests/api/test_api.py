@@ -32,7 +32,12 @@ def test_api_server(base_url: str = "http://localhost:3000") -> bool:
     # Test 1: Health check
     log.info("\n1. Testing health check endpoint...")
     try:
-        response = requests.get(f"{base_url}/health_check", timeout=5)
+        response = requests.post(
+            f"{base_url}/health_check",
+            json={},
+            headers={"Content-Type": "application/json"},
+            timeout=5
+        )
         if response.status_code == 200:
             log.info("✓ Health check successful!")
             log.info(f"Response: {response.json()}")
@@ -46,7 +51,12 @@ def test_api_server(base_url: str = "http://localhost:3000") -> bool:
     # Test 2: Model info
     log.info("\n2. Testing model info endpoint...")
     try:
-        response = requests.get(f"{base_url}/get_model_info", timeout=5)
+        response = requests.post(
+            f"{base_url}/get_model_info",
+            json={},
+            headers={"Content-Type": "application/json"},
+            timeout=5
+        )
         if response.status_code == 200:
             log.info("✓ Model info successful!")
             model_info = response.json()
@@ -72,7 +82,7 @@ def test_api_server(base_url: str = "http://localhost:3000") -> bool:
     try:
         response = requests.post(
             f"{base_url}/predict_admission",
-            json=test_data,
+            json={"input_data": test_data},
             headers={"Content-Type": "application/json"},
             timeout=10
         )
@@ -82,7 +92,6 @@ def test_api_server(base_url: str = "http://localhost:3000") -> bool:
             log.info(f"Chance of Admit: {result.get('chance_of_admit')}")
             log.info(f"Confidence: {result.get('confidence_level')}")
             log.info(f"Recommendation: {result.get('recommendation')}")
-            return True
         else:
             log.error(f"✗ Prediction failed with status {response.status_code}")
             log.error(f"Error: {response.text}")
@@ -90,6 +99,54 @@ def test_api_server(base_url: str = "http://localhost:3000") -> bool:
     except requests.exceptions.RequestException as e:
         log.error(f"✗ Prediction failed: {e}")
         return False
+
+    # Test 4: Batch prediction
+    log.info("\n4. Testing batch prediction endpoint...")
+    test_batch_data = [
+        {
+            "gre_score": 340,
+            "toefl_score": 120,
+            "university_rating": 5,
+            "sop": 5.0,
+            "lor": 5.0,
+            "cgpa": 9.8,
+            "research": 1
+        },
+        {
+            "gre_score": 280,
+            "toefl_score": 80,
+            "university_rating": 2,
+            "sop": 2.5,
+            "lor": 2.5,
+            "cgpa": 6.0,
+            "research": 0
+        }
+    ]
+
+    try:
+        response = requests.post(
+            f"{base_url}/predict_admission_batch",
+            json={"input_data": test_batch_data},
+            headers={"Content-Type": "application/json"},
+            timeout=15
+        )
+        if response.status_code == 200:
+            log.info("✓ Batch prediction successful!")
+            results = response.json()
+            log.info(f"Processed {len(results)} students")
+            for i, result in enumerate(results):
+                log.info(
+                    f"Student {i+1}: "
+                    f"{result.get('percentage_chance', 0):.1f}% chance"
+                )
+        else:
+            log.error(f"✗ Batch prediction failed with status {response.status_code}")
+            log.error(f"Error: {response.text}")
+    except requests.exceptions.RequestException as e:
+        log.error(f"✗ Batch prediction failed: {e}")
+
+    # All tests completed
+    return True
 
 
 if __name__ == "__main__":

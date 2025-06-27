@@ -13,13 +13,16 @@ PROJECT_ROOT = Path(__file__).parent.parent
 def start_server() -> None:
     """Start the BentoML development server."""
     print("🚀 Starting Admission Prediction API Server...")
-    print("=" * 50)
+    print("=" * 60)
     print("Server will be available at: http://localhost:3000")
+    print("API Documentation: http://localhost:3000/docs")
+    print("")
     print("Available endpoints:")
-    print("  - POST /predict_admission")
-    print("  - GET  /health_check")
-    print("  - GET  /get_model_info")
-    print("=" * 50)
+    print("  - POST /predict_admission       - Single student prediction")
+    print("  - POST /predict_admission_batch - Batch predictions")
+    print("  - POST /health_check           - Service health status")
+    print("  - POST /get_model_info         - Model metadata")
+    print("=" * 60)
     print("Press Ctrl+C to stop the server")
     print()
 
