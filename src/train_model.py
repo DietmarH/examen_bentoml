@@ -4,34 +4,35 @@ Loads processed data, trains regression models, evaluates performance,
 and saves to BentoML.
 """
 
-import pandas as pd
-import numpy as np
 import logging
 import sys
 from pathlib import Path
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from typing import Dict, List, Optional, Tuple, Union
+
 import bentoml
-from typing import Optional, Tuple, Dict, Union, List
+import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator as Model
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import StandardScaler
 
 # Add config to path
 sys.path.append(str(Path(__file__).parent.parent / "config"))
 from config.settings import (  # noqa: E402
-    LOGS_DIR,
-    LOG_FORMAT,
+    BENTOML_MODEL_NAME,
+    CV_FOLDS,
+    FEATURES,
     LOG_DATE_FORMAT,
+    LOG_FORMAT,
+    LOGS_DIR,
     MODEL_NAMES,
+    MODEL_RANDOM_STATE,
     PERFORMANCE_THRESHOLD,
     PROCESSED_DATA_DIR,
-    MODEL_RANDOM_STATE,
-    CV_FOLDS,
     TARGET_COLUMN,
-    FEATURES,
-    BENTOML_MODEL_NAME
 )
 
 # Configure logging
@@ -43,21 +44,18 @@ logging.basicConfig(
     level=logging.INFO,
     format=LOG_FORMAT,
     datefmt=LOG_DATE_FORMAT,
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file)
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(log_file)],
 )
 log = logging.getLogger(__name__)
 
 
 def load_processed_data(
-    data_dir: Optional[str] = None
+    data_dir: Optional[str] = None,
 ) -> Tuple[
     Optional[pd.DataFrame],
     Optional[pd.DataFrame],
     Optional[pd.Series],
-    Optional[pd.Series]
+    Optional[pd.Series],
 ]:
     """Load the processed training and test datasets."""
     log.info("=== Loading Processed Data ===")
@@ -78,9 +76,7 @@ def load_processed_data(
             f"Training data loaded: X_train {X_train.shape}, "
             f"y_train {y_train.shape}"
         )
-        log.info(
-            f"Test data loaded: X_test {X_test.shape}, y_test {y_test.shape}"
-        )
+        log.info(f"Test data loaded: X_test {X_test.shape}, y_test {y_test.shape}")
         log.info(f"Features: {list(X_train.columns)}")
 
         return X_train, X_test, y_train, y_test
@@ -91,8 +87,7 @@ def load_processed_data(
 
 
 def preprocess_features(
-    X_train: pd.DataFrame,
-    X_test: pd.DataFrame
+    X_train: pd.DataFrame, X_test: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
     """Preprocess features using StandardScaler."""
     log.info("=== Feature Preprocessing ===")
@@ -124,19 +119,19 @@ def create_models() -> Dict[str, object]:
     log.info("=== Creating Models ===")
 
     models = {
-        MODEL_NAMES['linear']: LinearRegression(),
-        MODEL_NAMES['random_forest']: RandomForestRegressor(
+        MODEL_NAMES["linear"]: LinearRegression(),
+        MODEL_NAMES["random_forest"]: RandomForestRegressor(
             n_estimators=100,
             random_state=MODEL_RANDOM_STATE,
             max_depth=10,
-            min_samples_split=5
+            min_samples_split=5,
         ),
-        MODEL_NAMES['gradient_boosting']: GradientBoostingRegressor(
+        MODEL_NAMES["gradient_boosting"]: GradientBoostingRegressor(
             n_estimators=100,
             random_state=MODEL_RANDOM_STATE,
             max_depth=6,
-            learning_rate=0.1
-        )
+            learning_rate=0.1,
+        ),
     }
 
     log.info(f"Created {len(models)} models: {list(models.keys())}")
@@ -147,7 +142,7 @@ def evaluate_models_cv(
     models: Dict[str, object],
     X_train: pd.DataFrame,
     y_train: pd.Series,
-    cv_folds: int = CV_FOLDS
+    cv_folds: int = CV_FOLDS,
 ) -> Tuple[Dict[str, Dict[str, object]], str]:
     """Evaluate models using cross-validation."""
     log.info(f"=== Cross-Validation Evaluation (CV={cv_folds}) ===")
@@ -158,24 +153,18 @@ def evaluate_models_cv(
         log.info(f"Evaluating {name}...")
 
         # Perform cross-validation
-        cv_scores = cross_val_score(
-            model, X_train, y_train, cv=cv_folds, scoring='r2'
-        )
+        cv_scores = cross_val_score(model, X_train, y_train, cv=cv_folds, scoring="r2")
 
         cv_results[name] = {
-            'mean_r2': cv_scores.mean(),
-            'std_r2': cv_scores.std(),
-            'scores': cv_scores
+            "mean_r2": cv_scores.mean(),
+            "std_r2": cv_scores.std(),
+            "scores": cv_scores,
         }
 
-        log.info(
-            f"{name} - Mean R²: {cv_scores.mean():.4f} (±{cv_scores.std():.4f})"
-        )
+        log.info(f"{name} - Mean R²: {cv_scores.mean():.4f} (±{cv_scores.std():.4f})")
 
     # Find best model
-    best_model_name = max(
-        cv_results.keys(), key=lambda k: cv_results[k]['mean_r2']
-    )
+    best_model_name = max(cv_results.keys(), key=lambda k: cv_results[k]["mean_r2"])
     log.info(f"Best model by CV: {best_model_name}")
 
     return cv_results, best_model_name
@@ -185,7 +174,7 @@ def train_best_model(
     best_model_name: str,
     models: Dict[str, object],
     X_train: pd.DataFrame,
-    y_train: pd.Series
+    y_train: pd.Series,
 ) -> object:
     """Train the best performing model on the full training set."""
     log.info(f"=== Training Best Model: {best_model_name} ===")
@@ -212,12 +201,7 @@ def calculate_metrics(y_true: pd.Series, y_pred: pd.Series) -> Dict[str, float]:
     except Exception as e:
         raise ValueError(f"Could not cast MAPE to float: {e}")
 
-    return {
-        'R²': r2,
-        'RMSE': rmse,
-        'MAE': mae,
-        'MAPE': mape
-    }
+    return {"R²": r2, "RMSE": rmse, "MAE": mae, "MAPE": mape}
 
 
 def evaluate_model(
@@ -225,7 +209,7 @@ def evaluate_model(
     X_train: pd.DataFrame,
     y_train: pd.Series,
     X_test: pd.DataFrame,
-    y_test: pd.Series
+    y_test: pd.Series,
 ) -> Tuple[Dict[str, float], Dict[str, float], pd.Series]:
     """Evaluate model performance on training and test sets."""
     log.info("=== Model Performance Evaluation ===")
@@ -251,11 +235,9 @@ def evaluate_model(
         log.info(f"  {metric}: {value:.4f}")
 
     # Check for overfitting
-    r2_diff = train_metrics['R²'] - test_metrics['R²']
+    r2_diff = train_metrics["R²"] - test_metrics["R²"]
     if r2_diff > 0.1:
-        log.warning(
-            f"Potential overfitting detected: R² difference = {r2_diff:.4f}"
-        )
+        log.warning(f"Potential overfitting detected: R² difference = {r2_diff:.4f}")
     else:
         log.info(f"Good generalization: R² difference = {r2_diff:.4f}")
 
@@ -266,7 +248,7 @@ def save_model_to_bentoml(
     model: object,
     scaler: StandardScaler,
     model_name: str,
-    test_metrics: Dict[str, float]
+    test_metrics: Dict[str, float],
 ) -> Optional[Model]:
     """Save the trained model and scaler to BentoML Model Store."""
     log.info("=== Saving Model to BentoML ===")
@@ -275,13 +257,13 @@ def save_model_to_bentoml(
         # Create model metadata
         metadata: Dict[str, Union[str, float, List[str]]] = {
             "model_type": str(model_name),
-            "test_r2": float(test_metrics['R²']),
-            "test_rmse": float(test_metrics['RMSE']),
-            "test_mae": float(test_metrics['MAE']),
-            "test_mape": float(test_metrics['MAPE']),
+            "test_r2": float(test_metrics["R²"]),
+            "test_rmse": float(test_metrics["RMSE"]),
+            "test_mae": float(test_metrics["MAE"]),
+            "test_mape": float(test_metrics["MAPE"]),
             "features": list(FEATURES),  # Ensure features is a list of strings
             "target": str(TARGET_COLUMN.strip()),
-            "training_date": str(pd.Timestamp.now().isoformat())
+            "training_date": str(pd.Timestamp.now().isoformat()),
         }
 
         # Save model to BentoML
@@ -289,9 +271,7 @@ def save_model_to_bentoml(
             f"{BENTOML_MODEL_NAME}_{model_name.lower().replace(' ', '_')}",
             model,
             metadata=metadata,
-            custom_objects={
-                "scaler": scaler
-            }
+            custom_objects={"scaler": scaler},
         )
 
         log.info(f"Model saved to BentoML with tag: {model_tag}")
@@ -342,14 +322,10 @@ def main() -> None:
     models = create_models()
 
     # Step 4: Evaluate models using cross-validation
-    cv_results, best_model_name = evaluate_models_cv(
-        models, X_train_scaled, y_train
-    )
+    cv_results, best_model_name = evaluate_models_cv(models, X_train_scaled, y_train)
 
     # Step 5: Train best model
-    best_model = train_best_model(
-        best_model_name, models, X_train_scaled, y_train
-    )
+    best_model = train_best_model(best_model_name, models, X_train_scaled, y_train)
 
     # Step 6: Evaluate model performance
     train_metrics, test_metrics, y_test_pred = evaluate_model(
@@ -357,10 +333,8 @@ def main() -> None:
     )
 
     # Step 7: Check if model performance is satisfactory
-    if test_metrics['R²'] >= PERFORMANCE_THRESHOLD:
-        log.info(
-            f"Model performance is satisfactory (R² = {test_metrics['R²']:.4f})"
-        )
+    if test_metrics["R²"] >= PERFORMANCE_THRESHOLD:
+        log.info(f"Model performance is satisfactory (R² = {test_metrics['R²']:.4f})")
 
         # Step 8: Save model to BentoML
         model_tag = save_model_to_bentoml(

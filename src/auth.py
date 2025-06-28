@@ -4,25 +4,30 @@ Provides JWT-based authentication and authorization.
 """
 
 import hashlib
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Dict, Any, Optional
 import logging
 import os
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any, Dict, Optional
 
+import jwt
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-import jwt
 
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
+JWT_SECRET_KEY: Optional[str] = os.getenv("JWT_SECRET_KEY")
+JWT_ALGORITHM: Optional[str] = os.getenv("JWT_ALGORITHM")
 if not JWT_SECRET_KEY or not JWT_ALGORITHM:
     raise RuntimeError("JWT_SECRET_KEY and JWT_ALGORITHM must be set in the .env file.")
+
+# After validation, we know these are not None
+JWT_SECRET_KEY_VALIDATED: str = JWT_SECRET_KEY
+JWT_ALGORITHM_VALIDATED: str = JWT_ALGORITHM
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Demo users database (in production, use a real database)
@@ -67,9 +72,9 @@ class LoginResponse(BaseModel):
 class TokenData(BaseModel):
     """Token data model."""
 
-    username: Optional[str] = None
-    role: Optional[str] = None
-    exp: Optional[datetime] = None
+    username: str
+    role: str
+    exp: datetime
 
 
 def hash_password(password: str) -> str:
@@ -113,7 +118,9 @@ def create_access_token(
     to_encode.update({"exp": expire})
 
     try:
-        encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode, JWT_SECRET_KEY_VALIDATED, algorithm=JWT_ALGORITHM_VALIDATED
+        )
         logger.info(f"JWT token created for user: {data.get('username')}")
         return encoded_jwt
     except Exception as e:
@@ -124,13 +131,23 @@ def create_access_token(
 def verify_token(token: str) -> Optional[TokenData]:
     """Verify and decode a JWT token."""
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-        username: str = payload.get("sub")
-        role: str = payload.get("role")
-        exp_timestamp: int = payload.get("exp")
+        payload = jwt.decode(
+            token, JWT_SECRET_KEY_VALIDATED, algorithms=[JWT_ALGORITHM_VALIDATED]
+        )
+        username: Optional[str] = payload.get("sub")
+        role: Optional[str] = payload.get("role")
+        exp_timestamp: Optional[int] = payload.get("exp")
 
         if username is None:
             logger.warning("Token verification failed: No username in token")
+            return None
+
+        if role is None:
+            logger.warning("Token verification failed: No role in token")
+            return None
+
+        if exp_timestamp is None:
+            logger.warning("Token verification failed: No expiration in token")
             return None
 
         # Convert timestamp to datetime
@@ -143,7 +160,7 @@ def verify_token(token: str) -> Optional[TokenData]:
     except jwt.ExpiredSignatureError:
         logger.warning("Token verification failed: Token has expired")
         return None
-    except jwt.JWTError as e:
+    except jwt.InvalidTokenError as e:
         logger.warning(f"Token verification failed: {e}")
         return None
 

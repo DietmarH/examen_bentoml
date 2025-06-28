@@ -30,7 +30,7 @@ FEATURES = [
     'GRE Score', 'TOEFL Score', 'University Rating',
     'SOP', 'LOR ', 'CGPA', 'Research'
 ]
-TARGET_COLUMN = 'Chance of Admit'
+TARGET_COLUMN = 'Chance of Admit '
 
 # Logging configuration
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

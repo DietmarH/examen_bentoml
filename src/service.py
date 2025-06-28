@@ -11,17 +11,18 @@ import os
 import sys
 from datetime import timedelta
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import bentoml
 
 # Third party imports
 import jwt
 import pandas as pd
-import bentoml
 from bentoml.models import Model
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
-from starlette.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
 
 # Configure logging at the very top, after imports
 # Ensure the main logs directory exists
@@ -70,34 +71,38 @@ logger.info("SERVICE LOGGING TEST: This should appear in service.log")
 # Load environment variables from .env file
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
-if not JWT_SECRET_KEY or not JWT_ALGORITHM:
+_JWT_SECRET_KEY: Optional[str] = os.getenv("JWT_SECRET_KEY")
+_JWT_ALGORITHM: Optional[str] = os.getenv("JWT_ALGORITHM")
+if not _JWT_SECRET_KEY or not _JWT_ALGORITHM:
     raise RuntimeError("JWT_SECRET_KEY and JWT_ALGORITHM must be set in the .env file.")
+
+# After validation, we know these are not None
+JWT_SECRET_KEY: str = _JWT_SECRET_KEY
+JWT_ALGORITHM: str = _JWT_ALGORITHM
 
 # Import authentication module
 try:
     from .auth import (
+        ACCESS_TOKEN_EXPIRE_MINUTES,
+        DEMO_USERS,
         LoginResponse,
         authenticate_user,
         create_access_token,
-        require_auth,
         require_admin,
-        ACCESS_TOKEN_EXPIRE_MINUTES,
-        DEMO_USERS,  # <-- Add DEMO_USERS here
+        require_auth,
     )
 except ImportError:
     # Fallback for direct script execution
     sys.path.append(str(Path(__file__).parent))
-    from auth import (
-        LoginResponse,
-        authenticate_user,
-        create_access_token,
-        require_auth,
-        require_admin,
-        ACCESS_TOKEN_EXPIRE_MINUTES,
-        DEMO_USERS,  # <-- Add DEMO_USERS here
-    )
+    import auth
+
+    ACCESS_TOKEN_EXPIRE_MINUTES = auth.ACCESS_TOKEN_EXPIRE_MINUTES
+    DEMO_USERS = auth.DEMO_USERS
+    # LoginResponse = auth.LoginResponse  # Skip type assignment to avoid mypy error
+    authenticate_user = auth.authenticate_user
+    create_access_token = auth.create_access_token
+    require_admin = auth.require_admin
+    require_auth = auth.require_auth
 # Adjusted sys.path logic to ensure proper module resolution
 config_path: Path = Path(__file__).parent.parent / "config"
 if config_path.as_posix() not in sys.path:
@@ -109,7 +114,7 @@ if config_path.is_dir() and not (config_path / "__init__.py").exists():
 
 # Add config the import settings
 try:
-    from config.settings import FEATURES, BENTOML_MODEL_NAME  # Updated import path
+    from config.settings import BENTOML_MODEL_NAME, FEATURES  # Updated import path
 except ImportError:
     # Fallback values if settings cannot be imported
     FEATURES = [
@@ -125,18 +130,26 @@ except ImportError:
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        if request.url.path.startswith("/predict") or request.url.path.startswith("/admin"):
+    async def dispatch(self, request: Any, call_next: Any) -> Any:
+        if request.url.path.startswith("/predict") or request.url.path.startswith(
+            "/admin"
+        ):
             token = request.headers.get("Authorization")
             if not token:
-                return JSONResponse(status_code=401, content={"detail": "Missing authentication token"})
+                return JSONResponse(
+                    status_code=401, content={"detail": "Missing authentication token"}
+                )
             try:
                 token = token.split()[1]
                 payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
             except jwt.ExpiredSignatureError:
-                return JSONResponse(status_code=401, content={"detail": "Token has expired"})
+                return JSONResponse(
+                    status_code=401, content={"detail": "Token has expired"}
+                )
             except jwt.InvalidTokenError:
-                return JSONResponse(status_code=401, content={"detail": "Invalid token"})
+                return JSONResponse(
+                    status_code=401, content={"detail": "Invalid token"}
+                )
             request.state.user = payload.get("sub")
         return await call_next(request)
 
@@ -378,7 +391,7 @@ class AdmissionPredictionService:
         self: "AdmissionPredictionService",
         username: str,
         password: str,
-    ) -> LoginResponse:
+    ) -> Any:
         """
         Login endpoint to authenticate users and get access token.
 
@@ -405,18 +418,19 @@ class AdmissionPredictionService:
                 logger.warning(f"Failed login attempt for user: {username}")
                 from starlette.responses import JSONResponse
                 from starlette.status import HTTP_401_UNAUTHORIZED
+
                 return JSONResponse(
                     status_code=HTTP_401_UNAUTHORIZED,
                     content={
                         "error": "Invalid username or password",
-                        "detail": "Authentication failed."
-                    }
+                        "detail": "Authentication failed.",
+                    },
                 )
 
             # Create access token
             access_token = create_access_token(
                 data={"sub": user["username"], "role": user["role"]},
-                expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+                expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
             )
 
             user_info = {
@@ -438,12 +452,13 @@ class AdmissionPredictionService:
             logger.error(f"Login error: {e}")
             from starlette.responses import JSONResponse
             from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
+
             return JSONResponse(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
                     "error": "An unexpected error has occurred, please check the server log.",
-                    "detail": str(e)
-                }
+                    "detail": str(e),
+                },
             )
 
     @bentoml.api  # type: ignore[misc]
@@ -757,27 +772,52 @@ class AdmissionPredictionService:
             # Create DataFrame with the exact feature order
             input_df: pd.DataFrame = pd.DataFrame([input_dict])[FEATURES]
 
-            # Scale the input data
-            input_scaled = input_df.values
+            # Scale the input data while preserving feature names
+            input_for_prediction = input_df
             try:
                 custom_objects = getattr(self.model, "custom_objects", None)
                 if custom_objects and "scaler" in custom_objects:
                     scaler = custom_objects["scaler"]
                     if scaler is not None:
-                        input_scaled = scaler.transform(input_df)
+                        # Transform and always wrap in DataFrame with correct columns
+                        scaled_values = scaler.transform(input_df)
+                        input_for_prediction = pd.DataFrame(
+                            scaled_values, columns=input_df.columns
+                        )
                         logger.debug("Applied scaler to input data")
                     else:
                         logger.warning("Scaler is None, using raw input")
+                        # Ensure DataFrame
+                        input_for_prediction = pd.DataFrame(
+                            input_for_prediction, columns=input_df.columns
+                        )
                 else:
                     logger.warning("No scaler found, using raw input")
+                    # Ensure DataFrame
+                    input_for_prediction = pd.DataFrame(
+                        input_for_prediction, columns=input_df.columns
+                    )
             except Exception as e:
                 logger.warning(f"Error applying scaler: {e}, using raw input")
+                # Ensure DataFrame
+                input_for_prediction = pd.DataFrame(
+                    input_for_prediction, columns=input_df.columns
+                )
+
+            # Final guarantee: ensure input_for_prediction is a DataFrame with correct columns
+            if not isinstance(input_for_prediction, pd.DataFrame):
+                input_for_prediction = pd.DataFrame(
+                    input_for_prediction, columns=input_df.columns
+                )
+            else:
+                # If DataFrame, ensure columns are correct and in order
+                input_for_prediction = input_for_prediction[FEATURES]
 
             # Load the underlying sklearn model
             loaded_model = bentoml.sklearn.load_model(self.model.tag)
 
-            # Make predictions using the loaded model
-            prediction = loaded_model.predict(input_scaled)
+            # Make predictions using the DataFrame to preserve feature names
+            prediction = loaded_model.predict(input_for_prediction)
             logger.debug("Model prediction completed")
             chance_of_admit: float = float(prediction[0])
 

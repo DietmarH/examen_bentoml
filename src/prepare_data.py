@@ -3,20 +3,27 @@ Data preparation script for admission prediction model.
 Loads, cleans, and splits the admission dataset into training and test sets.
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-import os
 import logging
+import os
 import sys
 from pathlib import Path
-from typing import Optional, Tuple, Dict
+from typing import Dict, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
 
 # Add config to path (necessary for importing settings)
 sys.path.append(str(Path(__file__).parent.parent / "config"))
 from config.settings import (  # noqa: E402
-    LOGS_DIR, LOG_FORMAT, LOG_DATE_FORMAT, TEST_SIZE, MODEL_RANDOM_STATE,
-    TARGET_COLUMN, ADMISSION_DATA_FILE, PROCESSED_DATA_DIR
+    ADMISSION_DATA_FILE,
+    LOG_DATE_FORMAT,
+    LOG_FORMAT,
+    LOGS_DIR,
+    MODEL_RANDOM_STATE,
+    PROCESSED_DATA_DIR,
+    TARGET_COLUMN,
+    TEST_SIZE,
 )
 
 # Configure logging
@@ -27,10 +34,7 @@ logging.basicConfig(
     level=logging.INFO,
     format=LOG_FORMAT,
     datefmt=LOG_DATE_FORMAT,
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file)
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(log_file)],
 )
 log = logging.getLogger(__name__)
 
@@ -58,8 +62,8 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     log.info(f"Columns: {df.columns.tolist()}")
 
     # Remove Serial No. column as it's just an identifier and not useful for modeling
-    if 'Serial No.' in df.columns:
-        df = df.drop('Serial No.', axis=1)
+    if "Serial No." in df.columns:
+        df = df.drop("Serial No.", axis=1)
         log.info("Removed 'Serial No.' column (not relevant for modeling)")
 
     # Strip whitespace from column names
@@ -96,7 +100,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def prepare_features_target(
-    df: pd.DataFrame
+    df: pd.DataFrame,
 ) -> Tuple[Optional[pd.DataFrame], Optional[pd.Series]]:
     """Separate features and target variable."""
     log.info("=== Feature and Target Preparation ===")
@@ -115,9 +119,7 @@ def prepare_features_target(
     log.info(f"Target shape: {y.shape}")
     log.info(f"Feature columns: {X.columns.tolist()}")
     log.info(f"Target variable: {TARGET_COLUMN}")
-    log.info(
-        f"Target range: [{y.min():.3f}, {y.max():.3f}]"
-    )
+    log.info(f"Target range: [{y.min():.3f}, {y.max():.3f}]")
 
     return X, y
 
@@ -126,7 +128,7 @@ def split_data(
     X: pd.DataFrame,
     y: pd.Series,
     test_size: float = TEST_SIZE,
-    random_state: int = MODEL_RANDOM_STATE
+    random_state: int = MODEL_RANDOM_STATE,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """Split the data into training and testing sets."""
     log.info("=== Data Splitting ===")
@@ -150,7 +152,7 @@ def save_processed_data(
     X_test: pd.DataFrame,
     y_train: pd.Series,
     y_test: pd.Series,
-    output_dir: str
+    output_dir: str,
 ) -> Optional[Dict[str, str]]:
     """Save the processed datasets to the specified directory."""
     log.info("=== Saving Processed Data ===")
@@ -160,18 +162,18 @@ def save_processed_data(
 
     # Save the datasets
     file_paths = {
-        'X_train': os.path.join(output_dir, 'X_train.csv'),
-        'X_test': os.path.join(output_dir, 'X_test.csv'),
-        'y_train': os.path.join(output_dir, 'y_train.csv'),
-        'y_test': os.path.join(output_dir, 'y_test.csv')
+        "X_train": os.path.join(output_dir, "X_train.csv"),
+        "X_test": os.path.join(output_dir, "X_test.csv"),
+        "y_train": os.path.join(output_dir, "y_train.csv"),
+        "y_test": os.path.join(output_dir, "y_test.csv"),
     }
 
     try:
         # Save as CSV files
-        X_train.to_csv(file_paths['X_train'], index=False)
-        X_test.to_csv(file_paths['X_test'], index=False)
-        y_train.to_csv(file_paths['y_train'], index=False)
-        y_test.to_csv(file_paths['y_test'], index=False)
+        X_train.to_csv(file_paths["X_train"], index=False)
+        X_test.to_csv(file_paths["X_test"], index=False)
+        y_train.to_csv(file_paths["y_train"], index=False)
+        y_test.to_csv(file_paths["y_test"], index=False)
 
         log.info("Files saved successfully:")
         for name, path in file_paths.items():
