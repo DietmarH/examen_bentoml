@@ -2,17 +2,16 @@
 Test script for the admission prediction service.
 """
 
+import logging
 import sys
 from pathlib import Path
-import logging
 
 # Add project root and src to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 sys.path.append(str(PROJECT_ROOT / "src"))
 
-from service import AdmissionPredictionService, AdmissionInput    # noqa: E402
-
+from service import AdmissionInput, AdmissionPredictionService  # noqa: E402
 
 # Configure logging for the test
 log_file = PROJECT_ROOT / "logs" / "test_service.log"
@@ -21,10 +20,7 @@ log_file.parent.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file)
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(log_file)],
 )
 log = logging.getLogger(__name__)
 
@@ -45,7 +41,7 @@ def test_service() -> bool:
         sop=4.5,
         lor=4.0,
         cgpa=8.5,
-        research=1
+        research=1,
     )
     log.info("✓ Test input created")
 
@@ -73,6 +69,7 @@ def test_service() -> bool:
     except Exception as e:
         log.error(f"✗ Error: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

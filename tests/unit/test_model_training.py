@@ -1,21 +1,29 @@
 """
 Test suite for model training pipeline.
 """
-import pytest
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score
-from sklearn.preprocessing import StandardScaler
+
 import logging
 from pathlib import Path
-from sklearn.base import BaseEstimator
+
+import numpy as np
+import pandas as pd
+import pytest
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 # Import project modules
 try:
-    from config.settings import PROCESSED_DATA_DIR, MODEL_RANDOM_STATE
-    from tests.conftest import SAMPLE_DATA, MIN_R2_SCORE
+    from config.settings import MODEL_RANDOM_STATE, PROCESSED_DATA_DIR
+    from src.train_model import (
+        calculate_metrics,
+        create_models,
+        evaluate_models_cv,
+        load_processed_data,
+        preprocess_features,
+        train_best_model,
+    )
+    from tests.conftest import MIN_R2_SCORE, SAMPLE_DATA
 except ImportError as e:
     pytest.skip(f"Could not import required modules: {e}", allow_module_level=True)
 
@@ -27,68 +35,9 @@ Path(log_file).parent.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file)
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(log_file)],
 )
 log = logging.getLogger(__name__)
-
-
-# Added mock definitions for missing functions
-def load_processed_data(
-    directory: str
-) -> tuple[
-    pd.DataFrame | None, pd.DataFrame | None, pd.Series | None, pd.Series | None
-]:
-    return None, None, None, None
-
-
-def preprocess_features(
-    X_train: pd.DataFrame,
-    X_test: pd.DataFrame
-) -> tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
-    """Scale features using StandardScaler."""
-    scaler = StandardScaler()
-    X_train_scaled = pd.DataFrame(
-        scaler.fit_transform(X_train),
-        columns=X_train.columns
-    )
-    X_test_scaled = pd.DataFrame(
-        scaler.transform(X_test),
-        columns=X_test.columns
-    )
-    return X_train_scaled, X_test_scaled, scaler
-
-
-def create_models() -> dict[str, object]:
-    return {}
-
-
-def evaluate_models_cv(
-    models: dict[str, object],
-    X: pd.DataFrame,
-    y: pd.Series,
-    cv_folds: int = 5
-) -> tuple[
-    dict[str, dict[str, float]], str
-]:
-    return {}, ""
-
-
-def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, float]:
-    return {}
-
-
-def train_best_model(
-    name: str,
-    models: dict[str, BaseEstimator],
-    X: pd.DataFrame,
-    y: pd.Series
-) -> BaseEstimator:
-    """Train the best model and return it."""
-    model = models[name]
-    return model.fit(X, y)
 
 
 class TestDataLoading:
@@ -96,9 +45,9 @@ class TestDataLoading:
 
     def test_load_processed_data_success(self) -> None:
         """Test successful loading of processed data."""
-        if all((PROCESSED_DATA_DIR / f).exists() for f in [
-            'X_train.csv', 'X_test.csv',
-            'y_train.csv', 'y_test.csv']
+        if all(
+            (PROCESSED_DATA_DIR / f).exists()
+            for f in ["X_train.csv", "X_test.csv", "y_train.csv", "y_test.csv"]
         ):
 
             X_train, X_test, y_train, y_test = load_processed_data(
@@ -127,15 +76,17 @@ class TestFeaturePreprocessing:
     def setup_method(self) -> None:
         """Set up test data."""
         self.X_train = pd.DataFrame(SAMPLE_DATA)
-        self.X_test = pd.DataFrame({
-            'GRE Score': [315],
-            'TOEFL Score': [105],
-            'University Rating': [4],
-            'SOP': [3.0],
-            'LOR ': [3.5],
-            'CGPA': [8.0],
-            'Research': [0]
-        })
+        self.X_test = pd.DataFrame(
+            {
+                "GRE Score": [315],
+                "TOEFL Score": [105],
+                "University Rating": [4],
+                "SOP": [3.0],
+                "LOR ": [3.5],
+                "CGPA": [8.0],
+                "Research": [0],
+            }
+        )
 
     def test_preprocessing_shapes(self) -> None:
         """Test that preprocessing maintains correct shapes."""
@@ -159,12 +110,12 @@ class TestFeaturePreprocessing:
 
         # Means should be close to 0, stds close to 1
         # Use more reasonable tolerances for small datasets (sample std can vary more)
-        assert all(abs(mean) < 0.3 for mean in train_means), (
-            f"Means not close to 0: {train_means}"
-        )
-        assert all(abs(std - 1.0) < 0.3 for std in train_stds), (
-            f"Stds not close to 1: {train_stds}"
-        )
+        assert all(
+            abs(mean) < 0.3 for mean in train_means
+        ), f"Means not close to 0: {train_means}"
+        assert all(
+            abs(std - 1.0) < 0.3 for std in train_stds
+        ), f"Stds not close to 1: {train_stds}"
 
     def test_preprocessing_consistency(self) -> None:
         """Test that preprocessing is consistent across calls."""
@@ -195,9 +146,9 @@ class TestModelCreation:
         # Check that we have expected model types
         model_types = [type(model).__name__ for model in models.values()]
         expected_types = [
-            'LinearRegression',
-            'RandomForestRegressor',
-            'GradientBoostingRegressor'
+            "LinearRegression",
+            "RandomForestRegressor",
+            "GradientBoostingRegressor",
         ]
 
         for expected_type in expected_types:
@@ -208,7 +159,7 @@ class TestModelCreation:
         models = create_models()
 
         for name, model in models.items():
-            if hasattr(model, 'random_state'):
+            if hasattr(model, "random_state"):
                 assert model.random_state == MODEL_RANDOM_STATE
 
 
@@ -219,19 +170,25 @@ class TestModelEvaluation:
         """Set up test data and models."""
         # Create synthetic data for testing
         np.random.seed(42)
-        self.X = pd.DataFrame({
-            'feature1': np.random.normal(0, 1, 100),
-            'feature2': np.random.normal(0, 1, 100),
-            'feature3': np.random.normal(0, 1, 100)
-        })
+        self.X = pd.DataFrame(
+            {
+                "feature1": np.random.normal(0, 1, 100),
+                "feature2": np.random.normal(0, 1, 100),
+                "feature3": np.random.normal(0, 1, 100),
+            }
+        )
         # Create target with some relationship to features
         # pylint: disable=E501
-        self.y = self.X['feature1'] * 0.5 + self.X['feature2'] * 0.3 + np.random.normal(0, 0.1, 100)  # noqa: E501
+        self.y = (
+            self.X["feature1"] * 0.5
+            + self.X["feature2"] * 0.3
+            + np.random.normal(0, 0.1, 100)
+        )  # noqa: E501
         # pylint: enable=E501
 
         self.models = {
-            'Linear Regression': LinearRegression(),
-            'Random Forest': RandomForestRegressor(n_estimators=10, random_state=42)
+            "Linear Regression": LinearRegression(),
+            "Random Forest": RandomForestRegressor(n_estimators=10, random_state=42),
         }
 
     def test_evaluate_models_cv_returns_results(self) -> None:
@@ -246,11 +203,11 @@ class TestModelEvaluation:
 
         # Check structure of results
         for name, results in cv_results.items():
-            assert 'mean_r2' in results
-            assert 'std_r2' in results
-            assert 'scores' in results
-            assert isinstance(results['mean_r2'], float)
-            assert isinstance(results['std_r2'], float)
+            assert "mean_r2" in results
+            assert "std_r2" in results
+            assert "scores" in results
+            assert isinstance(results["mean_r2"], float)
+            assert isinstance(results["std_r2"], float)
 
     def test_best_model_selection(self) -> None:
         """Test that best model is selected correctly."""
@@ -259,9 +216,9 @@ class TestModelEvaluation:
         )
 
         # Best model should have highest mean R²
-        best_score = cv_results[best_model_name]['mean_r2']
+        best_score = cv_results[best_model_name]["mean_r2"]
         for name, results in cv_results.items():
-            assert results['mean_r2'] <= best_score
+            assert results["mean_r2"] <= best_score
 
 
 class TestMetricsCalculation:
@@ -274,7 +231,7 @@ class TestMetricsCalculation:
 
         metrics = calculate_metrics(y_true, y_pred)
 
-        expected_metrics = ['R²', 'RMSE', 'MAE', 'MAPE']
+        expected_metrics = ["R²", "RMSE", "MAE", "MAPE"]
         assert all(metric in metrics for metric in expected_metrics)
         assert all(isinstance(value, float) for value in metrics.values())
 
@@ -285,10 +242,10 @@ class TestMetricsCalculation:
 
         metrics = calculate_metrics(y_true, y_pred)
 
-        assert metrics['R²'] == 1.0
-        assert metrics['RMSE'] == 0.0
-        assert metrics['MAE'] == 0.0
-        assert metrics['MAPE'] == 0.0
+        assert metrics["R²"] == 1.0
+        assert metrics["RMSE"] == 0.0
+        assert metrics["MAE"] == 0.0
+        assert metrics["MAPE"] == 0.0
 
     def test_calculate_metrics_bounds(self) -> None:
         """Test that metrics are within reasonable bounds."""
@@ -298,14 +255,14 @@ class TestMetricsCalculation:
         metrics = calculate_metrics(y_true, y_pred)
 
         # R² should be between -inf and 1
-        assert metrics['R²'] <= 1.0
+        assert metrics["R²"] <= 1.0
 
         # RMSE and MAE should be non-negative
-        assert metrics['RMSE'] >= 0.0
-        assert metrics['MAE'] >= 0.0
+        assert metrics["RMSE"] >= 0.0
+        assert metrics["MAE"] >= 0.0
 
         # MAPE should be non-negative (assuming positive targets)
-        assert metrics['MAPE'] >= 0.0
+        assert metrics["MAPE"] >= 0.0
 
 
 class TestModelTraining:
@@ -314,22 +271,28 @@ class TestModelTraining:
     def setup_method(self) -> None:
         """Set up test data."""
         np.random.seed(42)
-        self.X = pd.DataFrame({
-            'feature1': np.random.normal(0, 1, 100),
-            'feature2': np.random.normal(0, 1, 100)
-        })
+        self.X = pd.DataFrame(
+            {
+                "feature1": np.random.normal(0, 1, 100),
+                "feature2": np.random.normal(0, 1, 100),
+            }
+        )
         # pylint: disable=E501
-        self.y = self.X['feature1'] * 0.5 + self.X['feature2'] * 0.3 + np.random.normal(0, 0.1, 100)  # noqa: E501
+        self.y = (
+            self.X["feature1"] * 0.5
+            + self.X["feature2"] * 0.3
+            + np.random.normal(0, 0.1, 100)
+        )  # noqa: E501
         # pylint: enable=E501
 
-        self.models = {'Linear Regression': LinearRegression()}
+        self.models = {"Linear Regression": LinearRegression()}
 
     def test_train_best_model(self) -> None:
         """Test training of best model."""
-        best_model = train_best_model('Linear Regression', self.models, self.X, self.y)
+        best_model = train_best_model("Linear Regression", self.models, self.X, self.y)
 
         assert best_model is not None
-        assert hasattr(best_model, 'predict')
+        assert hasattr(best_model, "predict")
 
         # Test that model can make predictions
         predictions = best_model.predict(self.X)

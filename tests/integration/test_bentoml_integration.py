@@ -1,14 +1,17 @@
 """
 Test suite for BentoML integration.
 """
+
 import logging
 from typing import Optional
-import pytest
+
+import bentoml
 import numpy as np
 import pandas as pd
-import bentoml
+import pytest
+
 from config.settings import BENTOML_MODEL_NAME, FEATURES
-from conftest import SAMPLE_DATA
+from tests.conftest import SAMPLE_DATA
 
 log = logging.getLogger(__name__)
 
@@ -60,9 +63,7 @@ class TestBentoMLIntegration:
         original_pred = model.predict(X)
         loaded_pred = loaded_model.predict(X)
 
-        np.testing.assert_array_almost_equal(
-            original_pred, loaded_pred, decimal=5
-        )
+        np.testing.assert_array_almost_equal(original_pred, loaded_pred, decimal=5)
 
     def test_bentoml_model_metadata(self) -> None:
         """Test that model metadata is properly saved and retrieved."""
@@ -129,9 +130,7 @@ class TestBentoMLIntegration:
         """Test model prediction functionality."""
         # First check if we have any admission prediction models
         models = bentoml.models.list()
-        admission_models = [
-            m for m in models if "admission_prediction" in m.tag.name
-        ]
+        admission_models = [m for m in models if "admission_prediction" in m.tag.name]
 
         if admission_models:
             # Use the latest model
@@ -193,9 +192,7 @@ class TestModelPerformanceValidation:
     def test_saved_model_performance_threshold(self) -> None:
         """Test that saved models meet performance thresholds."""
         models = bentoml.models.list()
-        admission_models = [
-            m for m in models if "admission_prediction" in m.tag.name
-        ]
+        admission_models = [m for m in models if "admission_prediction" in m.tag.name]
 
         for model_ref in admission_models:
             model_info = bentoml.models.get(model_ref.tag)
@@ -204,9 +201,9 @@ class TestModelPerformanceValidation:
             if "test_r2" in metadata:
                 r2_score = metadata["test_r2"]
                 if isinstance(r2_score, (int, float)):
-                    assert r2_score >= 0.5, (
-                        f"Model {model_ref.tag} has low R² score: {r2_score}"
-                    )
+                    assert (
+                        r2_score >= 0.5
+                    ), f"Model {model_ref.tag} has low R² score: {r2_score}"
                 else:
                     log.warning(
                         f"Invalid type for test_r2 in model {model_ref.tag}: "
@@ -216,9 +213,7 @@ class TestModelPerformanceValidation:
             if "test_rmse" in metadata:
                 rmse = metadata["test_rmse"]
                 if isinstance(rmse, (int, float)):
-                    assert rmse <= 0.2, (
-                        f"Model {model_ref.tag} has high RMSE: {rmse}"
-                    )
+                    assert rmse <= 0.2, f"Model {model_ref.tag} has high RMSE: {rmse}"
                 else:
                     log.warning(
                         f"Invalid type for test_rmse in model {model_ref.tag}: "
@@ -228,9 +223,7 @@ class TestModelPerformanceValidation:
     def test_model_feature_consistency(self) -> None:
         """Test that saved models have consistent feature definitions."""
         models = bentoml.models.list()
-        admission_models = [
-            m for m in models if "admission_prediction" in m.tag.name
-        ]
+        admission_models = [m for m in models if "admission_prediction" in m.tag.name]
 
         for model_ref in admission_models:
             model_info = bentoml.models.get(model_ref.tag)
@@ -269,9 +262,7 @@ class TestErrorHandling:
     def test_prediction_with_wrong_input_shape(self) -> None:
         """Test prediction with wrong input shape."""
         models = bentoml.models.list()
-        admission_models = [
-            m for m in models if "admission_prediction" in m.tag.name
-        ]
+        admission_models = [m for m in models if "admission_prediction" in m.tag.name]
 
         for model_ref in admission_models:
             loaded_model = bentoml.sklearn.load_model(model_ref.tag)

@@ -1,12 +1,14 @@
 """
 Test suite for data preparation pipeline.
 """
-import pytest
-import pandas as pd
-import numpy as np
-import os
+
 import logging
+import os
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
 
 # Configure logging for data preparation tests
 log_file = "logs/test_data_preparation.log"
@@ -15,23 +17,22 @@ Path(log_file).parent.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file)
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(log_file)],
 )
 log = logging.getLogger(__name__)
 
 # Import project modules
 try:
+    from config.settings import ADMISSION_DATA_FILE, FEATURES, PROCESSED_DATA_DIR
     from src.prepare_data import (
-        load_data, clean_data, prepare_features_target, split_data
+        clean_data,
+        load_data,
+        prepare_features_target,
+        split_data,
     )
-    from config.settings import (
-        ADMISSION_DATA_FILE, PROCESSED_DATA_DIR, FEATURES
-    )
+
     # Updated import path for conftest to reflect its location in the tests directory
-    from tests.conftest import SAMPLE_DATA, SAMPLE_TARGET, MIN_SAMPLES
+    from tests.conftest import MIN_SAMPLES, SAMPLE_DATA, SAMPLE_TARGET
 except ImportError as e:
     log.error(f"Could not import required modules: {e}")
     raise
@@ -57,7 +58,7 @@ class TestDataLoading:
         """Test loading an invalid file."""
         # Create a temporary invalid file
         invalid_file = "invalid.csv"
-        with open(invalid_file, 'w') as f:
+        with open(invalid_file, "w") as f:
             f.write("invalid,csv,content\n1,2\n")  # Missing column
 
         try:
@@ -71,7 +72,7 @@ class TestDataLoading:
     def test_load_empty_file(self) -> None:
         """Test loading an empty CSV file."""
         empty_file = "empty.csv"
-        with open(empty_file, 'w') as f:
+        with open(empty_file, "w") as f:
             f.write("")
 
         try:
@@ -84,7 +85,7 @@ class TestDataLoading:
     def test_load_file_with_only_headers(self) -> None:
         """Test loading a file with only headers and no data."""
         header_only_file = "header_only.csv"
-        with open(header_only_file, 'w') as f:
+        with open(header_only_file, "w") as f:
             f.write(
                 (
                     "GRE Score,TOEFL Score,University Rating,SOP,LOR ,CGPA,Research,"
@@ -106,22 +107,24 @@ class TestDataCleaning:
 
     def setup_method(self) -> None:
         """Set up test data."""
-        self.sample_df = pd.DataFrame({
-            'Serial No.': [1, 2, 3],
-            'GRE Score': [320, 340, 320],  # One duplicate row
-            'TOEFL Score': [110, 120, 110],
-            'University Rating': [3, 5, 3],
-            'SOP': [3.5, 4.5, 3.5],
-            'LOR ': [3.0, 4.0, 3.0],
-            'CGPA': [8.5, 9.5, 8.5],
-            'Research': [1, 1, 1],
-            'Chance of Admit ': [0.75, 0.95, 0.75]
-        })
+        self.sample_df = pd.DataFrame(
+            {
+                "Serial No.": [1, 2, 3],
+                "GRE Score": [320, 340, 320],  # One duplicate row
+                "TOEFL Score": [110, 120, 110],
+                "University Rating": [3, 5, 3],
+                "SOP": [3.5, 4.5, 3.5],
+                "LOR ": [3.0, 4.0, 3.0],
+                "CGPA": [8.5, 9.5, 8.5],
+                "Research": [1, 1, 1],
+                "Chance of Admit ": [0.75, 0.95, 0.75],
+            }
+        )
 
     def test_remove_serial_column(self) -> None:
         """Test removal of Serial No. column."""
         cleaned_df = clean_data(self.sample_df.copy())
-        assert 'Serial No.' not in cleaned_df.columns
+        assert "Serial No." not in cleaned_df.columns
 
     def test_duplicate_removal(self) -> None:
         """Test duplicate row removal."""
@@ -131,40 +134,41 @@ class TestDataCleaning:
     def test_missing_values_handling(self) -> None:
         """Test missing values are handled."""
         df_with_missing = self.sample_df.copy()
-        df_with_missing.loc[0, 'GRE Score'] = np.nan
+        df_with_missing.loc[0, "GRE Score"] = np.nan
 
         cleaned_df = clean_data(df_with_missing)
-        assert not cleaned_df['GRE Score'].isnull().any()
+        assert not cleaned_df["GRE Score"].isnull().any()
 
     def test_data_types_preserved(self) -> None:
         """Test that data types are preserved after cleaning."""
         cleaned_df = clean_data(self.sample_df.copy())
-        assert cleaned_df['GRE Score'].dtype in [np.int64, np.float64], (
-            "Data type mismatch"
-        )
-        assert cleaned_df['Research'].dtype in [np.int64, np.float64]
+        assert cleaned_df["GRE Score"].dtype in [
+            np.int64,
+            np.float64,
+        ], "Data type mismatch"
+        assert cleaned_df["Research"].dtype in [np.int64, np.float64]
 
     def test_handle_special_characters_in_column_names(self) -> None:
         """Test handling of special characters or whitespace in column names."""
-        df = pd.DataFrame({
-            'GRE Score ': [320, 340],
-            ' TOEFL Score': [110, 120],
-            'University Rating ': [3, 5]
-        })
+        df = pd.DataFrame(
+            {
+                "GRE Score ": [320, 340],
+                " TOEFL Score": [110, 120],
+                "University Rating ": [3, 5],
+            }
+        )
         cleaned_df = clean_data(df)
         assert all(col.strip() == col for col in cleaned_df.columns)
 
     def test_preserve_numeric_and_categorical_data_types(self) -> None:
         """Test that numeric and categorical data types are preserved."""
-        df = pd.DataFrame({
-            'GRE Score': [320, 340],
-            'Research': [1, 0],
-            'University Rating': [3, 5]
-        })
+        df = pd.DataFrame(
+            {"GRE Score": [320, 340], "Research": [1, 0], "University Rating": [3, 5]}
+        )
         cleaned_df = clean_data(df)
-        assert cleaned_df['GRE Score'].dtype == np.int64
-        assert cleaned_df['Research'].dtype == np.int64
-        assert cleaned_df['University Rating'].dtype == np.int64
+        assert cleaned_df["GRE Score"].dtype == np.int64
+        assert cleaned_df["Research"].dtype == np.int64
+        assert cleaned_df["University Rating"].dtype == np.int64
 
 
 class TestFeatureTargetPreparation:
@@ -173,7 +177,7 @@ class TestFeatureTargetPreparation:
     def setup_method(self) -> None:
         """Set up test data."""
         self.sample_df = pd.DataFrame(SAMPLE_DATA)
-        self.sample_df['Chance of Admit '] = SAMPLE_TARGET
+        self.sample_df["Chance of Admit "] = SAMPLE_TARGET
 
     def test_feature_target_separation(self) -> None:
         """Test proper separation of features and target."""
@@ -185,11 +189,11 @@ class TestFeatureTargetPreparation:
         # At this point, mypy knows X and y are not None
         assert len(X.columns) == len(FEATURES)
         assert len(y) == len(SAMPLE_TARGET)
-        assert 'Chance of Admit ' not in X.columns
+        assert "Chance of Admit " not in X.columns
 
     def test_missing_target_column(self) -> None:
         """Test handling of missing target column."""
-        df_no_target = self.sample_df.drop('Chance of Admit ', axis=1)
+        df_no_target = self.sample_df.drop("Chance of Admit ", axis=1)
         X, y = prepare_features_target(df_no_target)
 
         assert X is None
@@ -220,9 +224,7 @@ class TestDataSplitting:
         X_large = pd.concat([self.X] * 50, ignore_index=True)
         y_large = pd.concat([self.y] * 50, ignore_index=True)
 
-        X_train, X_test, y_train, y_test = split_data(
-            X_large, y_large, test_size=0.2
-        )
+        X_train, X_test, y_train, y_test = split_data(X_large, y_large, test_size=0.2)
 
         total_samples = len(X_large)
         train_ratio = len(X_train) / total_samples
@@ -263,27 +265,29 @@ class TestDataSplitting:
 
     def test_split_data_proportions(self) -> None:
         """Test that train-test split proportions are correct."""
-        df = pd.DataFrame({
-            'GRE Score': [320, 340, 300, 310],
-            'TOEFL Score': [110, 120, 100, 105],
-            'Chance of Admit ': [0.75, 0.95, 0.65, 0.70]
-        })
+        df = pd.DataFrame(
+            {
+                "GRE Score": [320, 340, 300, 310],
+                "TOEFL Score": [110, 120, 100, 105],
+                "Chance of Admit ": [0.75, 0.95, 0.65, 0.70],
+            }
+        )
         X_train, X_test, y_train, y_test = split_data(
-            df[['GRE Score', 'TOEFL Score']],
-            df['Chance of Admit '],
+            df[["GRE Score", "TOEFL Score"]],
+            df["Chance of Admit "],
             test_size=0.25,
-            random_state=42
+            random_state=42,
         )
         assert len(X_train) == 3, "Train set size mismatch"
         assert len(X_test) == 1, "Test set size mismatch"
 
     def test_split_data_reproducibility(self) -> None:
         """Test that split_data produces the same split given the same random state."""
-        # Create a sample dataset
+        # Create a sample dataset with the correct target column name
         data = {
-            'Feature1': [1, 2, 3, 4, 5],
-            'Feature2': [6, 7, 8, 9, 10],
-            'Target': [0, 1, 0, 1, 0]
+            "Feature1": [1, 2, 3, 4, 5],
+            "Feature2": [6, 7, 8, 9, 10],
+            "Chance of Admit ": [0, 1, 0, 1, 0],
         }
         df = pd.DataFrame(data)
 
@@ -311,9 +315,7 @@ class TestDataIntegrity:
     def test_processed_data_exists(self) -> None:
         """Test that processed data files exist."""
         if PROCESSED_DATA_DIR.exists():
-            expected_files = [
-                'X_train.csv', 'X_test.csv', 'y_train.csv', 'y_test.csv'
-            ]
+            expected_files = ["X_train.csv", "X_test.csv", "y_train.csv", "y_test.csv"]
             for file_name in expected_files:
                 file_path = PROCESSED_DATA_DIR / file_name
                 if file_path.exists():
@@ -322,10 +324,10 @@ class TestDataIntegrity:
     def test_data_consistency(self) -> None:
         """Test consistency between train/test splits."""
         try:
-            X_train = pd.read_csv(PROCESSED_DATA_DIR / 'X_train.csv')
-            X_test = pd.read_csv(PROCESSED_DATA_DIR / 'X_test.csv')
-            y_train = pd.read_csv(PROCESSED_DATA_DIR / 'y_train.csv')
-            y_test = pd.read_csv(PROCESSED_DATA_DIR / 'y_test.csv')
+            X_train = pd.read_csv(PROCESSED_DATA_DIR / "X_train.csv")
+            X_test = pd.read_csv(PROCESSED_DATA_DIR / "X_test.csv")
+            y_train = pd.read_csv(PROCESSED_DATA_DIR / "y_train.csv")
+            y_test = pd.read_csv(PROCESSED_DATA_DIR / "y_test.csv")
 
             # Check shapes match
             assert len(X_train) == len(y_train)

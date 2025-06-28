@@ -1,6 +1,7 @@
 """
 Test configuration and utilities.
 """
+
 import sys
 from pathlib import Path
 
@@ -12,13 +13,13 @@ sys.path.insert(0, str(PROJECT_ROOT / "config"))
 
 # Test data
 SAMPLE_DATA = {
-    'GRE Score': [320, 340, 300],
-    'TOEFL Score': [110, 120, 100],
-    'University Rating': [3, 5, 2],
-    'SOP': [3.5, 4.5, 2.5],
-    'LOR ': [3.0, 4.0, 2.0],
-    'CGPA': [8.5, 9.5, 7.5],
-    'Research': [1, 1, 0]
+    "GRE Score": [320, 340, 300],
+    "TOEFL Score": [110, 120, 100],
+    "University Rating": [3, 5, 2],
+    "SOP": [3.5, 4.5, 2.5],
+    "LOR ": [3.0, 4.0, 2.0],
+    "CGPA": [8.5, 9.5, 7.5],
+    "Research": [1, 1, 0],
 }
 
 SAMPLE_TARGET = [0.75, 0.95, 0.45]
