@@ -706,10 +706,10 @@ class AdmissionPredictionService:
             user = require_admin(authorization)
             logger.info(f"Admin model info request from: {user['username']}")
 
-            metadata = self.model.info.metadata or {}
+            metadata = self.model_ref.info.metadata or {}
 
             model_info = {
-                "model_tag": str(self.model.tag),
+                "model_tag": str(self.model_ref.tag),
                 "model_type": metadata.get("model_type", "Unknown"),
                 "performance_metrics": {
                     "test_r2": metadata.get("test_r2"),
