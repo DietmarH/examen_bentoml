@@ -1,0 +1,18 @@
+# Minimal production requirements for admission prediction service
+# Core Machine Learning and Data Processing
+pandas>=2.3.0
+numpy>=2.2.6
+scikit-learn>=1.7.0
+
+# BentoML and Serving
+bentoml>=1.4.16
+uvicorn>=0.34.3
+
+# API and Authentication
+pydantic>=2.11.7
+pyjwt>=2.10.1
+python-dotenv>=1.1.1
+
+# HTTP Dependencies
+requests>=2.32.4
+starlette>=0.47.1
