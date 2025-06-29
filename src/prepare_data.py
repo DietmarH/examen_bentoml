@@ -105,15 +105,16 @@ def prepare_features_target(
     """Separate features and target variable."""
     log.info("=== Feature and Target Preparation ===")
 
-    # Define target variable
-    if TARGET_COLUMN not in df.columns:
-        log.error(f"Target variable '{TARGET_COLUMN}' not found in columns")
+    # Define target variable (handle the column name after cleaning)
+    target_col = TARGET_COLUMN.strip()  # Remove any whitespace
+    if target_col not in df.columns:
+        log.error(f"Target variable '{target_col}' not found in columns")
         log.error(f"Available columns: {list(df.columns)}")
         return None, None
 
     # Separate features (X) and target (y)
-    X = df.drop(columns=[TARGET_COLUMN])
-    y = df[TARGET_COLUMN]
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
 
     log.info(f"Features shape: {X.shape}")
     log.info(f"Target shape: {y.shape}")

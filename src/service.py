@@ -122,7 +122,7 @@ except ImportError:
         "TOEFL Score",
         "University Rating",
         "SOP",
-        "LOR ",
+        "LOR",
         "CGPA",
         "Research",
     ]
@@ -350,7 +350,7 @@ def get_latest_model() -> Model:
         )[0]
 
         # Load the model using sklearn loader
-        model: Model = bentoml.sklearn.get(latest_model.tag)
+        model = bentoml.sklearn.load_model(str(latest_model.tag))
         logger.info("Loaded latest linear regression model: %s", latest_model.tag)
         logger.info(f"Model creation time: {latest_model.info.creation_time}")
 
@@ -764,7 +764,7 @@ class AdmissionPredictionService:
                 "TOEFL Score": input_data.toefl_score,
                 "University Rating": input_data.university_rating,
                 "SOP": input_data.sop,
-                "LOR ": input_data.lor,  # Note the space after LOR
+                "LOR": input_data.lor,  # Cleaned column name without space
                 "CGPA": input_data.cgpa,
                 "Research": input_data.research,
             }
@@ -814,7 +814,7 @@ class AdmissionPredictionService:
                 input_for_prediction = input_for_prediction[FEATURES]
 
             # Load the underlying sklearn model
-            loaded_model = bentoml.sklearn.load_model(self.model.tag)
+            loaded_model = self.model
 
             # Make predictions using the DataFrame to preserve feature names
             prediction = loaded_model.predict(input_for_prediction)
