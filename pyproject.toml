@@ -35,6 +35,7 @@ dependencies = [
     "types-requests>=2.32.4.20250611",
     "pyjwt>=2.8.0",
     "requests>=2.32.4",
+    "python-dotenv>=1.1.1",
 ]
 
 [project.optional-dependencies]

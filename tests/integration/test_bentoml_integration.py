@@ -135,11 +135,16 @@ class TestBentoMLIntegration:
         if admission_models:
             # Use the latest model
             latest_model = admission_models[0]
+            
+            # Load the model and scaler
+            model_ref = bentoml.models.get(latest_model.tag)
             loaded_model = bentoml.sklearn.load_model(latest_model.tag)
+            scaler = model_ref.custom_objects["scaler"]
 
-            # Test prediction with sample data
+            # Test prediction with sample data (scale it first)
             test_input = np.array([[320, 110, 3, 3.5, 3.5, 8.5, 1]])
-            prediction = loaded_model.predict(test_input)
+            test_input_scaled = scaler.transform(test_input)
+            prediction = loaded_model.predict(test_input_scaled)
 
             assert len(prediction) == 1
             assert isinstance(prediction[0], (int, float))

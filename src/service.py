@@ -330,7 +330,7 @@ class APIStatus(BaseModel):
     endpoints: list[str] = Field(..., description="Available endpoints")
 
 
-def get_latest_model() -> Model:
+def get_latest_model() -> tuple[Model, Any]:
     """Get the latest admission_prediction_linear_regression model from BentoML
     store."""
     try:
@@ -361,7 +361,7 @@ def get_latest_model() -> Model:
             )
             logger.info(f"Model custom objects: {objects_info}")
 
-        return model
+        return latest_model, model  # Return both the model reference and the loaded model
 
     except Exception as e:
         logger.error(f"Error loading linear regression model: {e}")
@@ -370,7 +370,7 @@ def get_latest_model() -> Model:
 
 # Load the model
 try:
-    model_ref = get_latest_model()
+    model_ref, model_obj = get_latest_model()
     logger.info("Model loaded successfully")
 except Exception as e:
     logger.error(f"Failed to load model: {e}")
@@ -383,7 +383,8 @@ class AdmissionPredictionService:
     """BentoML service for admission prediction."""
 
     def __init__(self: "AdmissionPredictionService") -> None:
-        self.model = model_ref
+        self.model = model_obj  # The loaded sklearn model
+        self.model_ref = model_ref  # The BentoML model reference
         logger.info("AdmissionPredictionService initialized")
 
     @bentoml.api  # type: ignore[misc]
@@ -604,8 +605,8 @@ class AdmissionPredictionService:
 
             # Get model info
             model_info = {
-                "model_tag": str(self.model.tag),
-                "model_type": self.model.info.metadata.get("model_type", "Unknown"),
+                "model_tag": str(self.model_ref.tag),
+                "model_type": self.model_ref.info.metadata.get("model_type", "Unknown"),
                 "features": len(FEATURES),
                 "status": "healthy",
             }

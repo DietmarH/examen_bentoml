@@ -181,7 +181,9 @@ class TestFeatureTargetPreparation:
 
     def test_feature_target_separation(self) -> None:
         """Test proper separation of features and target."""
-        X, y = prepare_features_target(self.sample_df.copy())
+        # Clean the data first (this removes spaces from column names)
+        cleaned_df = clean_data(self.sample_df.copy())
+        X, y = prepare_features_target(cleaned_df)
 
         assert X is not None, "Features (X) should not be None"
         assert y is not None, "Target (y) should not be None"
@@ -189,7 +191,7 @@ class TestFeatureTargetPreparation:
         # At this point, mypy knows X and y are not None
         assert len(X.columns) == len(FEATURES)
         assert len(y) == len(SAMPLE_TARGET)
-        assert "Chance of Admit " not in X.columns
+        assert "Chance of Admit" not in X.columns  # Target should be removed from features
 
     def test_missing_target_column(self) -> None:
         """Test handling of missing target column."""
@@ -201,7 +203,9 @@ class TestFeatureTargetPreparation:
 
     def test_feature_names(self) -> None:
         """Test that feature names match expected."""
-        X, y = prepare_features_target(self.sample_df.copy())
+        # Clean the data first (this removes spaces from column names)
+        cleaned_df = clean_data(self.sample_df.copy())
+        X, y = prepare_features_target(cleaned_df)
 
         assert X is not None, "Features (X) should not be None"
         assert y is not None, "Target (y) should not be None"
@@ -291,8 +295,15 @@ class TestDataSplitting:
         }
         df = pd.DataFrame(data)
 
+        # Clean the data first (this removes spaces from column names)
+        cleaned_df = clean_data(df)
+        
         # Prepare features and target
-        X, y = prepare_features_target(df)
+        X, y = prepare_features_target(cleaned_df)
+        
+        # Ensure X and y are not None before proceeding
+        assert X is not None, "Features (X) should not be None"
+        assert y is not None, "Target (y) should not be None"
 
         # Split data twice with the same random state
         X_train1, X_test1, y_train1, y_test1 = split_data(
