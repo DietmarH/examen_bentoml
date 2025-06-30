@@ -18,7 +18,6 @@ import bentoml
 # Third party imports
 import jwt
 import pandas as pd
-from bentoml.models import Model
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -98,7 +97,7 @@ except ImportError:
 
     ACCESS_TOKEN_EXPIRE_MINUTES = auth.ACCESS_TOKEN_EXPIRE_MINUTES
     DEMO_USERS = auth.DEMO_USERS
-    # LoginResponse = auth.LoginResponse  # Skip type assignment to avoid mypy error
+    LoginResponse = auth.LoginResponse
     authenticate_user = auth.authenticate_user
     create_access_token = auth.create_access_token
     require_admin = auth.require_admin
@@ -330,7 +329,7 @@ class APIStatus(BaseModel):
     endpoints: list[str] = Field(..., description="Available endpoints")
 
 
-def get_latest_model() -> tuple[Model, Any]:
+def get_latest_model() -> tuple[Any, Any]:
     """Get the latest admission_prediction_linear_regression model from BentoML
     store."""
     try:
@@ -356,10 +355,11 @@ def get_latest_model() -> tuple[Model, Any]:
 
         # Check if model has the expected structure
         if hasattr(model, "custom_objects"):
-            objects_info = (
-                list(model.custom_objects.keys()) if model.custom_objects else "None"
-            )
+            custom_objects = getattr(model, "custom_objects", None)
+            objects_info = list(custom_objects.keys()) if custom_objects else "None"
             logger.info(f"Model custom objects: {objects_info}")
+        else:
+            logger.info("Model has no custom_objects attribute")
 
         return latest_model, model  # Return both the model reference and the loaded model
 
@@ -467,9 +467,9 @@ class AdmissionPredictionService:
         self: "AdmissionPredictionService",
         input_data: AdmissionInput,
         context: bentoml.Context,
-    ) -> AdmissionOutput:
+    ) -> Any:
         """
-        Main prediction endpoint with authentication.
+        Main prediction endpoint with admin authentication required.
 
         Args:
             input_data: Prediction request with student data
@@ -479,7 +479,7 @@ class AdmissionPredictionService:
 
         Example:
             POST /predict
-            Headers: Authorization: Bearer <token>
+            Headers: Authorization: Bearer <admin_token>
             {
                 "input_data": {
                     "gre_score": 320,
@@ -494,29 +494,52 @@ class AdmissionPredictionService:
         """
         try:
             authorization = context.request.headers.get("authorization", "")
-            user = require_auth(authorization)
+            
+            # Require admin access for predictions
+            user = require_admin(authorization)
             logger.info(
-                f"Authenticated prediction request from user: {user['username']}"
+                f"Authenticated admin prediction request from user: {user['username']}"
             )
 
             # Use the existing prediction logic
             return self._make_prediction(input_data, user)
 
         except ValueError as e:
-            logger.error(f"Authentication error: {e}")
-            raise
+            logger.error(f"Authentication/Authorization error: {e}")
+            
+            # Check if it's an admin access error specifically
+            if "Admin access required" in str(e):
+                # Return 403 Forbidden for non-admin users
+                from http import HTTPStatus
+                import bentoml
+                raise bentoml.exceptions.BadInput(
+                    "Admin access required. Only administrators can access the prediction endpoint.",
+                    error_code=HTTPStatus.FORBIDDEN
+                )
+            else:
+                # Return 401 Unauthorized for authentication errors
+                from http import HTTPStatus
+                import bentoml
+                raise bentoml.exceptions.BadInput(
+                    f"Authentication required: {str(e)}",
+                    error_code=HTTPStatus.UNAUTHORIZED
+                )
         except Exception as e:
             logger.error(f"Prediction error: {e}")
-            raise
+            # Return 500 Internal Server Error for other errors
+            import bentoml
+            raise bentoml.exceptions.InternalServerError(
+                "An error occurred while processing the prediction request."
+            )
 
     @bentoml.api  # type: ignore[misc]
     def predict_batch(
         self: "AdmissionPredictionService",
         input_data: list[AdmissionInput],
         context: bentoml.Context,
-    ) -> list[AdmissionOutput]:
+    ) -> Any:
         """
-        Batch prediction endpoint with authentication.
+        Batch prediction endpoint with admin authentication required.
 
         Args:
             input_data: Batch prediction request with list of student data
@@ -526,7 +549,7 @@ class AdmissionPredictionService:
 
         Example:
             POST /predict_batch
-            Headers: Authorization: Bearer <token>
+            Headers: Authorization: Bearer <admin_token>
             {
                 "input_data": [
                     {"gre_score": 320, "toefl_score": 110, ...},
@@ -536,9 +559,11 @@ class AdmissionPredictionService:
         """
         try:
             authorization = context.request.headers.get("authorization", "")
-            user = require_auth(authorization)
+            
+            # Require admin access for batch predictions
+            user = require_admin(authorization)
             logger.info(
-                f"Authenticated batch prediction request from user: "
+                f"Authenticated admin batch prediction request from user: "
                 f"{user['username']} for {len(input_data)} students"
             )
 
@@ -568,11 +593,29 @@ class AdmissionPredictionService:
             return predictions
 
         except ValueError as e:
-            logger.error(f"Authentication error: {e}")
-            raise
+            logger.error(f"Authentication/Authorization error: {e}")
+            
+            # Check if it's an admin access error specifically
+            if "Admin access required" in str(e):
+                from http import HTTPStatus
+                import bentoml
+                raise bentoml.exceptions.BadInput(
+                    "Admin access required. Only administrators can access the batch prediction endpoint.",
+                    error_code=HTTPStatus.FORBIDDEN
+                )
+            else:
+                from http import HTTPStatus
+                import bentoml
+                raise bentoml.exceptions.BadInput(
+                    f"Authentication required: {str(e)}",
+                    error_code=HTTPStatus.UNAUTHORIZED
+                )
         except Exception as e:
             logger.error(f"Batch prediction error: {e}")
-            raise
+            import bentoml
+            raise bentoml.exceptions.InternalServerError(
+                "An error occurred while processing the batch prediction request."
+            )
 
     @bentoml.api  # type: ignore[misc]
     def status(
@@ -681,10 +724,34 @@ class AdmissionPredictionService:
 
         except ValueError as e:
             logger.error(f"Admin authentication error: {e}")
-            raise
+            from starlette.responses import JSONResponse
+            
+            # Check if it's an admin access error specifically
+            if "Admin access required" in str(e):
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": "Admin access required",
+                        "detail": "Only administrators can access the users endpoint."
+                    }
+                )
+            else:
+                return JSONResponse(
+                    status_code=401,
+                    content={
+                        "error": "Authentication required",
+                        "detail": str(e)
+                    }
+                )
         except Exception as e:
             logger.error(f"Admin users error: {e}", exc_info=True)
-            raise
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Internal server error",
+                    "detail": "An error occurred while retrieving user information."
+                }
+            )
 
     @bentoml.api  # type: ignore[misc]
     def admin_model_info(
@@ -736,10 +803,34 @@ class AdmissionPredictionService:
 
         except ValueError as e:
             logger.error(f"Admin authentication error: {e}")
-            raise
+            from starlette.responses import JSONResponse
+            
+            # Check if it's an admin access error specifically
+            if "Admin access required" in str(e):
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": "Admin access required",
+                        "detail": "Only administrators can access the model info endpoint."
+                    }
+                )
+            else:
+                return JSONResponse(
+                    status_code=401,
+                    content={
+                        "error": "Authentication required",
+                        "detail": str(e)
+                    }
+                )
         except Exception as e:
             logger.error(f"Admin model info error: {e}")
-            raise
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Internal server error",
+                    "detail": "An error occurred while retrieving model information."
+                }
+            )
 
     def _make_prediction(
         self: "AdmissionPredictionService",

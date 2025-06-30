@@ -1,0 +1,97 @@
+Help on class BadInput in module bentoml.exceptions:
+
+class BadInput(InvalidArgument)
+ |  BadInput(message: 'str', *, error_code: 'HTTPStatus | None' = None)
+ |  
+ |  Raised when API server receiving bad input request
+ |  
+ |  Method resolution order:
+ |      BadInput
+ |      InvalidArgument
+ |      BentoMLException
+ |      builtins.Exception
+ |      builtins.BaseException
+ |      builtins.object
+ |  
+ |  Data and other attributes defined here:
+ |  
+ |  __annotations__ = {}
+ |  
+ |  error_code = <HTTPStatus.BAD_REQUEST: 400>
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from BentoMLException:
+ |  
+ |  __init__(self, message: 'str', *, error_code: 'HTTPStatus | None' = None)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Class methods inherited from BentoMLException:
+ |  
+ |  __init_subclass__() -> 'None' from builtins.type
+ |      This method is called when a class is subclassed.
+ |      
+ |      The default implementation does nothing. It may be
+ |      overridden to extend subclasses.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from BentoMLException:
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes inherited from BentoMLException:
+ |  
+ |  error_mapping = {<HTTPStatus.BAD_REQUEST: 400>: <class 'bentoml.except...
+ |  
+ |  ----------------------------------------------------------------------
+ |  Static methods inherited from builtins.Exception:
+ |  
+ |  __new__(*args, **kwargs) from builtins.type
+ |      Create and return a new object.  See help(type) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from builtins.BaseException:
+ |  
+ |  __delattr__(self, name, /)
+ |      Implement delattr(self, name).
+ |  
+ |  __getattribute__(self, name, /)
+ |      Return getattr(self, name).
+ |  
+ |  __reduce__(...)
+ |      Helper for pickle.
+ |  
+ |  __repr__(self, /)
+ |      Return repr(self).
+ |  
+ |  __setattr__(self, name, value, /)
+ |      Implement setattr(self, name, value).
+ |  
+ |  __setstate__(...)
+ |  
+ |  __str__(self, /)
+ |      Return str(self).
+ |  
+ |  with_traceback(...)
+ |      Exception.with_traceback(tb) --
+ |      set self.__traceback__ to tb and return self.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from builtins.BaseException:
+ |  
+ |  __cause__
+ |      exception cause
+ |  
+ |  __context__
+ |      exception context
+ |  
+ |  __dict__
+ |  
+ |  __suppress_context__
+ |  
+ |  __traceback__
+ |  
+ |  args
+

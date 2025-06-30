@@ -9,6 +9,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import requests
+
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.append(str(PROJECT_ROOT))
@@ -52,29 +54,28 @@ def run_command(cmd: str, description: str, check: bool = True) -> bool:
         return False
 
 
-def check_server_running(url: str = "http://localhost:3000", timeout: int = 5) -> bool:
-    """Check if the BentoML server is running."""
+def check_server_running(url: str = "http://localhost:3000", timeout: int = 3) -> bool:
+    """
+    Check if the BentoML server is running by sending a request to the /status or /docs endpoint.
+    Returns True if the server is running, False otherwise.
+    """
     try:
-        import requests
-
         response = requests.post(f"{url}/status", timeout=timeout)
         return response.status_code == 200
-    except ImportError:
-        # requests not available, try using subprocess with curl
-        try:
-            result = subprocess.run(
-                ["curl", "-s", f"{url}/status"], capture_output=True, timeout=timeout
-            )
-            return result.returncode == 0
-        except (subprocess.TimeoutExpired, FileNotFoundError):
-            return False
     except Exception:
         try:
             # Try GET method as fallback
             response = requests.get(f"{url}/docs", timeout=timeout)
             return response.status_code == 200
         except Exception:
-            return False
+            # requests not available or failed, try using subprocess with curl
+            try:
+                result = subprocess.run(
+                    ["curl", "-s", f"{url}/status"], capture_output=True, timeout=timeout
+                )
+                return result.returncode == 0
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                return False
 
 
 # Define your test cases and commands here
