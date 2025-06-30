@@ -1,9 +1,10 @@
 service: "src.service:AdmissionPredictionService"
-name: admissions_prediction
+name: hameister_admissions_prediction
 labels:
   owner: "Dietmar Hameister"
   project: "Admissions Prediction"
   description: "Predict the chance of admission of a student in a university"
+  version: "1.0.0"
 include:
   - "src/"
   - "config/"

@@ -38,12 +38,12 @@ def test_docker_container_functionality():
     try:
         result = subprocess.run(
             ["docker", "images", "--format", "{{.Repository}}:{{.Tag}}", 
-             "--filter", "reference=admissions_prediction"],
+             "--filter", "reference=hameister_admissions_prediction"],
             capture_output=True, text=True, check=True
         )
         images = result.stdout.strip().split('\n')
         if not images or not images[0]:
-            log.error("❌ No admissions_prediction Docker images found")
+            log.error("❌ No hameister_admissions_prediction Docker images found")
             return False
         
         image_name = images[0]
